@@ -98,7 +98,7 @@ async function init() {
     window.addEventListener('resize', windowResize);
 
     const terrain = new Terrain(scene);
-    physics.addMesh(terrain.ground);
+    //physics.addMesh(terrain.ground);
 
     physics.addMesh(cubeMesh, 1)
 

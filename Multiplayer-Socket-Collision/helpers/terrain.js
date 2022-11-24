@@ -14,7 +14,7 @@ import {
     Color,
     BoxGeometry
 } from 'three';
-
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 export class Terrain {
     constructor(scene) {
@@ -22,7 +22,8 @@ export class Terrain {
 
         this.background();
         this.basicLights();
-        this.createBasicTerrain();
+        //this.createBasicTerrain();
+        this.terrainModelLoader();
     }
 
     background(){
@@ -42,23 +43,43 @@ export class Terrain {
 
     createBasicTerrain() {
 
-        const groundTerrain = new TextureLoader().load('https://i.postimg.cc/VvNZKKnB/grasslight-big.jpg');
-        //const groundGeometry = new PlaneGeometry(1000, 1000);
-        const groundGeometry = new BoxGeometry(1000, 10, 1000);
-        const groundMaterial = new MeshPhongMaterial({
-            color: 0xffffff,
-            map: groundTerrain
-        });
+        // const groundTerrain = new TextureLoader().load('https://i.postimg.cc/VvNZKKnB/grasslight-big.jpg');
+        // //const groundGeometry = new PlaneGeometry(1000, 1000);
+        // const groundGeometry = new BoxGeometry(1000, 10, 1000);
+        // const groundMaterial = new MeshPhongMaterial({
+        //     color: 0xffffff,
+        //     map: groundTerrain
+        // });
 
-        //const groundMaterial = new MeshBasicMaterial({color: 'green', side: DoubleSide});
+        // //const groundMaterial = new MeshBasicMaterial({color: 'green', side: DoubleSide});
 
-        this.ground = new Mesh(groundGeometry, groundMaterial);
-        this.ground.material.map.repeat.set( 512, 512 );
-        this.ground.material.map.wrapS = RepeatWrapping;
-        this.ground.material.map.wrapT = RepeatWrapping;
-        this.ground.material.map.encoding = sRGBEncoding;
-        //ground.receiveShadow = true;
-        this.scene.add(this.ground)
+        // this.ground = new Mesh(groundGeometry, groundMaterial);
+        // this.ground.material.map.repeat.set( 512, 512 );
+        // this.ground.material.map.wrapS = RepeatWrapping;
+        // this.ground.material.map.wrapT = RepeatWrapping;
+        // this.ground.material.map.encoding = sRGBEncoding;
+        // //ground.receiveShadow = true;
+        // this.scene.add(this.ground)
+    }
+
+
+    terrainModelLoader(){
+        const loader = new GLTFLoader();
+
+        loader.load('/resources/battlefield_1_-_desert_map/scene.gltf',
+            (gltf) => {
+                this.scene.add(gltf.scene);
+
+                gltf.animations;
+                gltf.scene;
+                gltf.scenes;
+                gltf.cameras;
+                gltf.asset;
+
+                //this.ground = gltf;
+                console.log(gltf)
+            }
+        )
     }
 
 
