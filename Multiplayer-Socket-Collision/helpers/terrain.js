@@ -11,7 +11,8 @@ import {
     AmbientLight,
     DirectionalLight,
     Fog,
-    Color
+    Color,
+    BoxGeometry
 } from 'three';
 
 
@@ -42,7 +43,8 @@ export class Terrain {
     createBasicTerrain() {
 
         const groundTerrain = new TextureLoader().load('https://i.postimg.cc/VvNZKKnB/grasslight-big.jpg');
-        const groundGeometry = new PlaneGeometry(1000, 1000);
+        //const groundGeometry = new PlaneGeometry(1000, 1000);
+        const groundGeometry = new BoxGeometry(1000, 10, 1000);
         const groundMaterial = new MeshPhongMaterial({
             color: 0xffffff,
             map: groundTerrain
@@ -50,14 +52,13 @@ export class Terrain {
 
         //const groundMaterial = new MeshBasicMaterial({color: 'green', side: DoubleSide});
 
-        const ground = new Mesh(groundGeometry, groundMaterial);
-        ground.rotation.x = - Math.PI/2;
-        ground.material.map.repeat.set( 512, 512 );
-        ground.material.map.wrapS = RepeatWrapping;
-        ground.material.map.wrapT = RepeatWrapping;
-        ground.material.map.encoding = sRGBEncoding;
+        this.ground = new Mesh(groundGeometry, groundMaterial);
+        this.ground.material.map.repeat.set( 512, 512 );
+        this.ground.material.map.wrapS = RepeatWrapping;
+        this.ground.material.map.wrapT = RepeatWrapping;
+        this.ground.material.map.encoding = sRGBEncoding;
         //ground.receiveShadow = true;
-        this.scene.add(ground)
+        this.scene.add(this.ground)
     }
 
 

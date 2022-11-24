@@ -27,22 +27,28 @@ import { MD2CharacterComplex } from 'three/addons/misc/MD2CharacterComplex.js';
 import { Gyroscope } from 'three/addons/misc/Gyroscope.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const scene = new Scene();
+const params = {
 
-const geometry = new BoxGeometry(1, 1, 1);
-const material = new MeshBasicMaterial({
-    color: 'orange'
-});
-const cubeMesh = new Mesh(geometry, material);
-scene.add(cubeMesh);
+	firstPerson: false,
+	displayCollider: false,
+	displayBVH: false,
+	visualizeDepth: 10,
+	gravity: - 30,
+	playerSpeed: 10,
+	physicsSteps: 5,
+	//reset: reset,
+
+};
+
+const scene = new Scene();
 
 const sizes = {
     width: window.innerWidth,
     height: window.innerHeight
 }
 
-const camera = new PerspectiveCamera(75, sizes.width / sizes.height);
-camera.position.set( 0, 40, -40 );
+const camera = new PerspectiveCamera(75, sizes.width / sizes.height, 2000);
+camera.position.set( 10, 10, -10 );
 camera.lookAt(0,0,0);
 scene.add(camera);
 
@@ -307,7 +313,6 @@ function addModel(){
 }
 
 function animate() {
-    cubeMesh.rotation.x += 0.01;
 
     requestAnimationFrame(animate);
 

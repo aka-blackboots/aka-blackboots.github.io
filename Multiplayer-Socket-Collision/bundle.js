@@ -120,13 +120,6 @@ const RGBA_ASTC_10x10_Format = 37819;
 const RGBA_ASTC_12x10_Format = 37820;
 const RGBA_ASTC_12x12_Format = 37821;
 const RGBA_BPTC_Format = 36492;
-const InterpolateDiscrete = 2300;
-const InterpolateLinear = 2301;
-const InterpolateSmooth = 2302;
-const ZeroCurvatureEnding = 2400;
-const ZeroSlopeEnding = 2401;
-const WrapAroundEnding = 2402;
-const NormalAnimationBlendMode = 2500;
 const LinearEncoding = 3000;
 const sRGBEncoding = 3001;
 const BasicDepthPacking = 3200;
@@ -230,8 +223,6 @@ class EventDispatcher {
 
 const _lut = [ '00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '0a', '0b', '0c', '0d', '0e', '0f', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '1a', '1b', '1c', '1d', '1e', '1f', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '2a', '2b', '2c', '2d', '2e', '2f', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '3a', '3b', '3c', '3d', '3e', '3f', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '4a', '4b', '4c', '4d', '4e', '4f', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59', '5a', '5b', '5c', '5d', '5e', '5f', '60', '61', '62', '63', '64', '65', '66', '67', '68', '69', '6a', '6b', '6c', '6d', '6e', '6f', '70', '71', '72', '73', '74', '75', '76', '77', '78', '79', '7a', '7b', '7c', '7d', '7e', '7f', '80', '81', '82', '83', '84', '85', '86', '87', '88', '89', '8a', '8b', '8c', '8d', '8e', '8f', '90', '91', '92', '93', '94', '95', '96', '97', '98', '99', '9a', '9b', '9c', '9d', '9e', '9f', 'a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'aa', 'ab', 'ac', 'ad', 'ae', 'af', 'b0', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'ba', 'bb', 'bc', 'bd', 'be', 'bf', 'c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'ca', 'cb', 'cc', 'cd', 'ce', 'cf', 'd0', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9', 'da', 'db', 'dc', 'dd', 'de', 'df', 'e0', 'e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7', 'e8', 'e9', 'ea', 'eb', 'ec', 'ed', 'ee', 'ef', 'f0', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'fa', 'fb', 'fc', 'fd', 'fe', 'ff' ];
 
-let _seed = 1234567;
-
 
 const DEG2RAD = Math.PI / 180;
 const RAD2DEG = 180 / Math.PI;
@@ -267,119 +258,10 @@ function euclideanModulo( n, m ) {
 
 }
 
-// Linear mapping from range <a1, a2> to range <b1, b2>
-function mapLinear( x, a1, a2, b1, b2 ) {
-
-	return b1 + ( x - a1 ) * ( b2 - b1 ) / ( a2 - a1 );
-
-}
-
-// https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/inverse-lerp-a-super-useful-yet-often-overlooked-function-r5230/
-function inverseLerp( x, y, value ) {
-
-	if ( x !== y ) {
-
-		return ( value - x ) / ( y - x );
-
-	} else {
-
-		return 0;
-
-	}
-
-}
-
 // https://en.wikipedia.org/wiki/Linear_interpolation
 function lerp( x, y, t ) {
 
 	return ( 1 - t ) * x + t * y;
-
-}
-
-// http://www.rorydriscoll.com/2016/03/07/frame-rate-independent-damping-using-lerp/
-function damp( x, y, lambda, dt ) {
-
-	return lerp( x, y, 1 - Math.exp( - lambda * dt ) );
-
-}
-
-// https://www.desmos.com/calculator/vcsjnyz7x4
-function pingpong( x, length = 1 ) {
-
-	return length - Math.abs( euclideanModulo( x, length * 2 ) - length );
-
-}
-
-// http://en.wikipedia.org/wiki/Smoothstep
-function smoothstep( x, min, max ) {
-
-	if ( x <= min ) return 0;
-	if ( x >= max ) return 1;
-
-	x = ( x - min ) / ( max - min );
-
-	return x * x * ( 3 - 2 * x );
-
-}
-
-function smootherstep( x, min, max ) {
-
-	if ( x <= min ) return 0;
-	if ( x >= max ) return 1;
-
-	x = ( x - min ) / ( max - min );
-
-	return x * x * x * ( x * ( x * 6 - 15 ) + 10 );
-
-}
-
-// Random integer from <low, high> interval
-function randInt( low, high ) {
-
-	return low + Math.floor( Math.random() * ( high - low + 1 ) );
-
-}
-
-// Random float from <low, high> interval
-function randFloat( low, high ) {
-
-	return low + Math.random() * ( high - low );
-
-}
-
-// Random float from <-range/2, range/2> interval
-function randFloatSpread( range ) {
-
-	return range * ( 0.5 - Math.random() );
-
-}
-
-// Deterministic pseudo-random float in the interval [ 0, 1 ]
-function seededRandom( s ) {
-
-	if ( s !== undefined ) _seed = s;
-
-	// Mulberry32 generator
-
-	let t = _seed += 0x6D2B79F5;
-
-	t = Math.imul( t ^ t >>> 15, t | 1 );
-
-	t ^= t + Math.imul( t ^ t >>> 7, t | 61 );
-
-	return ( ( t ^ t >>> 14 ) >>> 0 ) / 4294967296;
-
-}
-
-function degToRad( degrees ) {
-
-	return degrees * DEG2RAD;
-
-}
-
-function radToDeg( radians ) {
-
-	return radians * RAD2DEG;
 
 }
 
@@ -389,71 +271,9 @@ function isPowerOfTwo( value ) {
 
 }
 
-function ceilPowerOfTwo( value ) {
-
-	return Math.pow( 2, Math.ceil( Math.log( value ) / Math.LN2 ) );
-
-}
-
 function floorPowerOfTwo( value ) {
 
 	return Math.pow( 2, Math.floor( Math.log( value ) / Math.LN2 ) );
-
-}
-
-function setQuaternionFromProperEuler( q, a, b, c, order ) {
-
-	// Intrinsic Proper Euler Angles - see https://en.wikipedia.org/wiki/Euler_angles
-
-	// rotations are applied to the axes in the order specified by 'order'
-	// rotation by angle 'a' is applied first, then by angle 'b', then by angle 'c'
-	// angles are in radians
-
-	const cos = Math.cos;
-	const sin = Math.sin;
-
-	const c2 = cos( b / 2 );
-	const s2 = sin( b / 2 );
-
-	const c13 = cos( ( a + c ) / 2 );
-	const s13 = sin( ( a + c ) / 2 );
-
-	const c1_3 = cos( ( a - c ) / 2 );
-	const s1_3 = sin( ( a - c ) / 2 );
-
-	const c3_1 = cos( ( c - a ) / 2 );
-	const s3_1 = sin( ( c - a ) / 2 );
-
-	switch ( order ) {
-
-		case 'XYX':
-			q.set( c2 * s13, s2 * c1_3, s2 * s1_3, c2 * c13 );
-			break;
-
-		case 'YZY':
-			q.set( s2 * s1_3, c2 * s13, s2 * c1_3, c2 * c13 );
-			break;
-
-		case 'ZXZ':
-			q.set( s2 * c1_3, s2 * s1_3, c2 * s13, c2 * c13 );
-			break;
-
-		case 'XZX':
-			q.set( c2 * s13, s2 * s3_1, s2 * c3_1, c2 * c13 );
-			break;
-
-		case 'YXY':
-			q.set( s2 * c3_1, c2 * s13, s2 * s3_1, c2 * c13 );
-			break;
-
-		case 'ZYZ':
-			q.set( s2 * s3_1, s2 * c3_1, c2 * s13, c2 * c13 );
-			break;
-
-		default:
-			console.warn( 'THREE.MathUtils: .setQuaternionFromProperEuler() encountered an unknown order: ' + order );
-
-	}
 
 }
 
@@ -520,34 +340,6 @@ function normalize( value, array ) {
 	}
 
 }
-
-var MathUtils = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	DEG2RAD: DEG2RAD,
-	RAD2DEG: RAD2DEG,
-	generateUUID: generateUUID,
-	clamp: clamp,
-	euclideanModulo: euclideanModulo,
-	mapLinear: mapLinear,
-	inverseLerp: inverseLerp,
-	lerp: lerp,
-	damp: damp,
-	pingpong: pingpong,
-	smoothstep: smoothstep,
-	smootherstep: smootherstep,
-	randInt: randInt,
-	randFloat: randFloat,
-	randFloatSpread: randFloatSpread,
-	seededRandom: seededRandom,
-	degToRad: degToRad,
-	radToDeg: radToDeg,
-	isPowerOfTwo: isPowerOfTwo,
-	ceilPowerOfTwo: ceilPowerOfTwo,
-	floorPowerOfTwo: floorPowerOfTwo,
-	setQuaternionFromProperEuler: setQuaternionFromProperEuler,
-	normalize: normalize,
-	denormalize: denormalize
-});
 
 class Vector2 {
 
@@ -28925,1719 +28717,6 @@ class MeshPhongMaterial extends Material {
 
 }
 
-class MeshLambertMaterial extends Material {
-
-	constructor( parameters ) {
-
-		super();
-
-		this.isMeshLambertMaterial = true;
-
-		this.type = 'MeshLambertMaterial';
-
-		this.color = new Color( 0xffffff ); // diffuse
-
-		this.map = null;
-
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
-
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
-
-		this.emissive = new Color( 0x000000 );
-		this.emissiveIntensity = 1.0;
-		this.emissiveMap = null;
-
-		this.bumpMap = null;
-		this.bumpScale = 1;
-
-		this.normalMap = null;
-		this.normalMapType = TangentSpaceNormalMap;
-		this.normalScale = new Vector2( 1, 1 );
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.specularMap = null;
-
-		this.alphaMap = null;
-
-		this.envMap = null;
-		this.combine = MultiplyOperation;
-		this.reflectivity = 1;
-		this.refractionRatio = 0.98;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
-
-		this.flatShading = false;
-
-		this.fog = true;
-
-		this.setValues( parameters );
-
-	}
-
-	copy( source ) {
-
-		super.copy( source );
-
-		this.color.copy( source.color );
-
-		this.map = source.map;
-
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
-
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
-
-		this.emissive.copy( source.emissive );
-		this.emissiveMap = source.emissiveMap;
-		this.emissiveIntensity = source.emissiveIntensity;
-
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
-
-		this.normalMap = source.normalMap;
-		this.normalMapType = source.normalMapType;
-		this.normalScale.copy( source.normalScale );
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.specularMap = source.specularMap;
-
-		this.alphaMap = source.alphaMap;
-
-		this.envMap = source.envMap;
-		this.combine = source.combine;
-		this.reflectivity = source.reflectivity;
-		this.refractionRatio = source.refractionRatio;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
-
-		this.flatShading = source.flatShading;
-
-		this.fog = source.fog;
-
-		return this;
-
-	}
-
-}
-
-// same as Array.prototype.slice, but also works on typed arrays
-function arraySlice( array, from, to ) {
-
-	if ( isTypedArray( array ) ) {
-
-		// in ios9 array.subarray(from, undefined) will return empty array
-		// but array.subarray(from) or array.subarray(from, len) is correct
-		return new array.constructor( array.subarray( from, to !== undefined ? to : array.length ) );
-
-	}
-
-	return array.slice( from, to );
-
-}
-
-// converts an array to a specific type
-function convertArray( array, type, forceClone ) {
-
-	if ( ! array || // let 'undefined' and 'null' pass
-		! forceClone && array.constructor === type ) return array;
-
-	if ( typeof type.BYTES_PER_ELEMENT === 'number' ) {
-
-		return new type( array ); // create typed array
-
-	}
-
-	return Array.prototype.slice.call( array ); // create Array
-
-}
-
-function isTypedArray( object ) {
-
-	return ArrayBuffer.isView( object ) &&
-		! ( object instanceof DataView );
-
-}
-
-// returns an array by which times and values can be sorted
-function getKeyframeOrder( times ) {
-
-	function compareTime( i, j ) {
-
-		return times[ i ] - times[ j ];
-
-	}
-
-	const n = times.length;
-	const result = new Array( n );
-	for ( let i = 0; i !== n; ++ i ) result[ i ] = i;
-
-	result.sort( compareTime );
-
-	return result;
-
-}
-
-// uses the array previously returned by 'getKeyframeOrder' to sort data
-function sortedArray( values, stride, order ) {
-
-	const nValues = values.length;
-	const result = new values.constructor( nValues );
-
-	for ( let i = 0, dstOffset = 0; dstOffset !== nValues; ++ i ) {
-
-		const srcOffset = order[ i ] * stride;
-
-		for ( let j = 0; j !== stride; ++ j ) {
-
-			result[ dstOffset ++ ] = values[ srcOffset + j ];
-
-		}
-
-	}
-
-	return result;
-
-}
-
-// function for parsing AOS keyframe formats
-function flattenJSON( jsonKeys, times, values, valuePropertyName ) {
-
-	let i = 1, key = jsonKeys[ 0 ];
-
-	while ( key !== undefined && key[ valuePropertyName ] === undefined ) {
-
-		key = jsonKeys[ i ++ ];
-
-	}
-
-	if ( key === undefined ) return; // no data
-
-	let value = key[ valuePropertyName ];
-	if ( value === undefined ) return; // no data
-
-	if ( Array.isArray( value ) ) {
-
-		do {
-
-			value = key[ valuePropertyName ];
-
-			if ( value !== undefined ) {
-
-				times.push( key.time );
-				values.push.apply( values, value ); // push all elements
-
-			}
-
-			key = jsonKeys[ i ++ ];
-
-		} while ( key !== undefined );
-
-	} else if ( value.toArray !== undefined ) {
-
-		// ...assume THREE.Math-ish
-
-		do {
-
-			value = key[ valuePropertyName ];
-
-			if ( value !== undefined ) {
-
-				times.push( key.time );
-				value.toArray( values, values.length );
-
-			}
-
-			key = jsonKeys[ i ++ ];
-
-		} while ( key !== undefined );
-
-	} else {
-
-		// otherwise push as-is
-
-		do {
-
-			value = key[ valuePropertyName ];
-
-			if ( value !== undefined ) {
-
-				times.push( key.time );
-				values.push( value );
-
-			}
-
-			key = jsonKeys[ i ++ ];
-
-		} while ( key !== undefined );
-
-	}
-
-}
-
-/**
- * Abstract base class of interpolants over parametric samples.
- *
- * The parameter domain is one dimensional, typically the time or a path
- * along a curve defined by the data.
- *
- * The sample values can have any dimensionality and derived classes may
- * apply special interpretations to the data.
- *
- * This class provides the interval seek in a Template Method, deferring
- * the actual interpolation to derived classes.
- *
- * Time complexity is O(1) for linear access crossing at most two points
- * and O(log N) for random access, where N is the number of positions.
- *
- * References:
- *
- * 		http://www.oodesign.com/template-method-pattern.html
- *
- */
-
-class Interpolant {
-
-	constructor( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
-
-		this.parameterPositions = parameterPositions;
-		this._cachedIndex = 0;
-
-		this.resultBuffer = resultBuffer !== undefined ?
-			resultBuffer : new sampleValues.constructor( sampleSize );
-		this.sampleValues = sampleValues;
-		this.valueSize = sampleSize;
-
-		this.settings = null;
-		this.DefaultSettings_ = {};
-
-	}
-
-	evaluate( t ) {
-
-		const pp = this.parameterPositions;
-		let i1 = this._cachedIndex,
-			t1 = pp[ i1 ],
-			t0 = pp[ i1 - 1 ];
-
-		validate_interval: {
-
-			seek: {
-
-				let right;
-
-				linear_scan: {
-
-					//- See http://jsperf.com/comparison-to-undefined/3
-					//- slower code:
-					//-
-					//- 				if ( t >= t1 || t1 === undefined ) {
-					forward_scan: if ( ! ( t < t1 ) ) {
-
-						for ( let giveUpAt = i1 + 2; ; ) {
-
-							if ( t1 === undefined ) {
-
-								if ( t < t0 ) break forward_scan;
-
-								// after end
-
-								i1 = pp.length;
-								this._cachedIndex = i1;
-								return this.copySampleValue_( i1 - 1 );
-
-							}
-
-							if ( i1 === giveUpAt ) break; // this loop
-
-							t0 = t1;
-							t1 = pp[ ++ i1 ];
-
-							if ( t < t1 ) {
-
-								// we have arrived at the sought interval
-								break seek;
-
-							}
-
-						}
-
-						// prepare binary search on the right side of the index
-						right = pp.length;
-						break linear_scan;
-
-					}
-
-					//- slower code:
-					//-					if ( t < t0 || t0 === undefined ) {
-					if ( ! ( t >= t0 ) ) {
-
-						// looping?
-
-						const t1global = pp[ 1 ];
-
-						if ( t < t1global ) {
-
-							i1 = 2; // + 1, using the scan for the details
-							t0 = t1global;
-
-						}
-
-						// linear reverse scan
-
-						for ( let giveUpAt = i1 - 2; ; ) {
-
-							if ( t0 === undefined ) {
-
-								// before start
-
-								this._cachedIndex = 0;
-								return this.copySampleValue_( 0 );
-
-							}
-
-							if ( i1 === giveUpAt ) break; // this loop
-
-							t1 = t0;
-							t0 = pp[ -- i1 - 1 ];
-
-							if ( t >= t0 ) {
-
-								// we have arrived at the sought interval
-								break seek;
-
-							}
-
-						}
-
-						// prepare binary search on the left side of the index
-						right = i1;
-						i1 = 0;
-						break linear_scan;
-
-					}
-
-					// the interval is valid
-
-					break validate_interval;
-
-				} // linear scan
-
-				// binary search
-
-				while ( i1 < right ) {
-
-					const mid = ( i1 + right ) >>> 1;
-
-					if ( t < pp[ mid ] ) {
-
-						right = mid;
-
-					} else {
-
-						i1 = mid + 1;
-
-					}
-
-				}
-
-				t1 = pp[ i1 ];
-				t0 = pp[ i1 - 1 ];
-
-				// check boundary cases, again
-
-				if ( t0 === undefined ) {
-
-					this._cachedIndex = 0;
-					return this.copySampleValue_( 0 );
-
-				}
-
-				if ( t1 === undefined ) {
-
-					i1 = pp.length;
-					this._cachedIndex = i1;
-					return this.copySampleValue_( i1 - 1 );
-
-				}
-
-			} // seek
-
-			this._cachedIndex = i1;
-
-			this.intervalChanged_( i1, t0, t1 );
-
-		} // validate_interval
-
-		return this.interpolate_( i1, t0, t, t1 );
-
-	}
-
-	getSettings_() {
-
-		return this.settings || this.DefaultSettings_;
-
-	}
-
-	copySampleValue_( index ) {
-
-		// copies a sample value to the result buffer
-
-		const result = this.resultBuffer,
-			values = this.sampleValues,
-			stride = this.valueSize,
-			offset = index * stride;
-
-		for ( let i = 0; i !== stride; ++ i ) {
-
-			result[ i ] = values[ offset + i ];
-
-		}
-
-		return result;
-
-	}
-
-	// Template methods for derived classes:
-
-	interpolate_( /* i1, t0, t, t1 */ ) {
-
-		throw new Error( 'call to abstract method' );
-		// implementations shall return this.resultBuffer
-
-	}
-
-	intervalChanged_( /* i1, t0, t1 */ ) {
-
-		// empty
-
-	}
-
-}
-
-/**
- * Fast and simple cubic spline interpolant.
- *
- * It was derived from a Hermitian construction setting the first derivative
- * at each sample position to the linear slope between neighboring positions
- * over their parameter interval.
- */
-
-class CubicInterpolant extends Interpolant {
-
-	constructor( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
-
-		super( parameterPositions, sampleValues, sampleSize, resultBuffer );
-
-		this._weightPrev = - 0;
-		this._offsetPrev = - 0;
-		this._weightNext = - 0;
-		this._offsetNext = - 0;
-
-		this.DefaultSettings_ = {
-
-			endingStart: ZeroCurvatureEnding,
-			endingEnd: ZeroCurvatureEnding
-
-		};
-
-	}
-
-	intervalChanged_( i1, t0, t1 ) {
-
-		const pp = this.parameterPositions;
-		let iPrev = i1 - 2,
-			iNext = i1 + 1,
-
-			tPrev = pp[ iPrev ],
-			tNext = pp[ iNext ];
-
-		if ( tPrev === undefined ) {
-
-			switch ( this.getSettings_().endingStart ) {
-
-				case ZeroSlopeEnding:
-
-					// f'(t0) = 0
-					iPrev = i1;
-					tPrev = 2 * t0 - t1;
-
-					break;
-
-				case WrapAroundEnding:
-
-					// use the other end of the curve
-					iPrev = pp.length - 2;
-					tPrev = t0 + pp[ iPrev ] - pp[ iPrev + 1 ];
-
-					break;
-
-				default: // ZeroCurvatureEnding
-
-					// f''(t0) = 0 a.k.a. Natural Spline
-					iPrev = i1;
-					tPrev = t1;
-
-			}
-
-		}
-
-		if ( tNext === undefined ) {
-
-			switch ( this.getSettings_().endingEnd ) {
-
-				case ZeroSlopeEnding:
-
-					// f'(tN) = 0
-					iNext = i1;
-					tNext = 2 * t1 - t0;
-
-					break;
-
-				case WrapAroundEnding:
-
-					// use the other end of the curve
-					iNext = 1;
-					tNext = t1 + pp[ 1 ] - pp[ 0 ];
-
-					break;
-
-				default: // ZeroCurvatureEnding
-
-					// f''(tN) = 0, a.k.a. Natural Spline
-					iNext = i1 - 1;
-					tNext = t0;
-
-			}
-
-		}
-
-		const halfDt = ( t1 - t0 ) * 0.5,
-			stride = this.valueSize;
-
-		this._weightPrev = halfDt / ( t0 - tPrev );
-		this._weightNext = halfDt / ( tNext - t1 );
-		this._offsetPrev = iPrev * stride;
-		this._offsetNext = iNext * stride;
-
-	}
-
-	interpolate_( i1, t0, t, t1 ) {
-
-		const result = this.resultBuffer,
-			values = this.sampleValues,
-			stride = this.valueSize,
-
-			o1 = i1 * stride,		o0 = o1 - stride,
-			oP = this._offsetPrev, 	oN = this._offsetNext,
-			wP = this._weightPrev,	wN = this._weightNext,
-
-			p = ( t - t0 ) / ( t1 - t0 ),
-			pp = p * p,
-			ppp = pp * p;
-
-		// evaluate polynomials
-
-		const sP = - wP * ppp + 2 * wP * pp - wP * p;
-		const s0 = ( 1 + wP ) * ppp + ( - 1.5 - 2 * wP ) * pp + ( - 0.5 + wP ) * p + 1;
-		const s1 = ( - 1 - wN ) * ppp + ( 1.5 + wN ) * pp + 0.5 * p;
-		const sN = wN * ppp - wN * pp;
-
-		// combine data linearly
-
-		for ( let i = 0; i !== stride; ++ i ) {
-
-			result[ i ] =
-					sP * values[ oP + i ] +
-					s0 * values[ o0 + i ] +
-					s1 * values[ o1 + i ] +
-					sN * values[ oN + i ];
-
-		}
-
-		return result;
-
-	}
-
-}
-
-class LinearInterpolant extends Interpolant {
-
-	constructor( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
-
-		super( parameterPositions, sampleValues, sampleSize, resultBuffer );
-
-	}
-
-	interpolate_( i1, t0, t, t1 ) {
-
-		const result = this.resultBuffer,
-			values = this.sampleValues,
-			stride = this.valueSize,
-
-			offset1 = i1 * stride,
-			offset0 = offset1 - stride,
-
-			weight1 = ( t - t0 ) / ( t1 - t0 ),
-			weight0 = 1 - weight1;
-
-		for ( let i = 0; i !== stride; ++ i ) {
-
-			result[ i ] =
-					values[ offset0 + i ] * weight0 +
-					values[ offset1 + i ] * weight1;
-
-		}
-
-		return result;
-
-	}
-
-}
-
-/**
- *
- * Interpolant that evaluates to the sample value at the position preceding
- * the parameter.
- */
-
-class DiscreteInterpolant extends Interpolant {
-
-	constructor( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
-
-		super( parameterPositions, sampleValues, sampleSize, resultBuffer );
-
-	}
-
-	interpolate_( i1 /*, t0, t, t1 */ ) {
-
-		return this.copySampleValue_( i1 - 1 );
-
-	}
-
-}
-
-class KeyframeTrack {
-
-	constructor( name, times, values, interpolation ) {
-
-		if ( name === undefined ) throw new Error( 'THREE.KeyframeTrack: track name is undefined' );
-		if ( times === undefined || times.length === 0 ) throw new Error( 'THREE.KeyframeTrack: no keyframes in track named ' + name );
-
-		this.name = name;
-
-		this.times = convertArray( times, this.TimeBufferType );
-		this.values = convertArray( values, this.ValueBufferType );
-
-		this.setInterpolation( interpolation || this.DefaultInterpolation );
-
-	}
-
-	// Serialization (in static context, because of constructor invocation
-	// and automatic invocation of .toJSON):
-
-	static toJSON( track ) {
-
-		const trackType = track.constructor;
-
-		let json;
-
-		// derived classes can define a static toJSON method
-		if ( trackType.toJSON !== this.toJSON ) {
-
-			json = trackType.toJSON( track );
-
-		} else {
-
-			// by default, we assume the data can be serialized as-is
-			json = {
-
-				'name': track.name,
-				'times': convertArray( track.times, Array ),
-				'values': convertArray( track.values, Array )
-
-			};
-
-			const interpolation = track.getInterpolation();
-
-			if ( interpolation !== track.DefaultInterpolation ) {
-
-				json.interpolation = interpolation;
-
-			}
-
-		}
-
-		json.type = track.ValueTypeName; // mandatory
-
-		return json;
-
-	}
-
-	InterpolantFactoryMethodDiscrete( result ) {
-
-		return new DiscreteInterpolant( this.times, this.values, this.getValueSize(), result );
-
-	}
-
-	InterpolantFactoryMethodLinear( result ) {
-
-		return new LinearInterpolant( this.times, this.values, this.getValueSize(), result );
-
-	}
-
-	InterpolantFactoryMethodSmooth( result ) {
-
-		return new CubicInterpolant( this.times, this.values, this.getValueSize(), result );
-
-	}
-
-	setInterpolation( interpolation ) {
-
-		let factoryMethod;
-
-		switch ( interpolation ) {
-
-			case InterpolateDiscrete:
-
-				factoryMethod = this.InterpolantFactoryMethodDiscrete;
-
-				break;
-
-			case InterpolateLinear:
-
-				factoryMethod = this.InterpolantFactoryMethodLinear;
-
-				break;
-
-			case InterpolateSmooth:
-
-				factoryMethod = this.InterpolantFactoryMethodSmooth;
-
-				break;
-
-		}
-
-		if ( factoryMethod === undefined ) {
-
-			const message = 'unsupported interpolation for ' +
-				this.ValueTypeName + ' keyframe track named ' + this.name;
-
-			if ( this.createInterpolant === undefined ) {
-
-				// fall back to default, unless the default itself is messed up
-				if ( interpolation !== this.DefaultInterpolation ) {
-
-					this.setInterpolation( this.DefaultInterpolation );
-
-				} else {
-
-					throw new Error( message ); // fatal, in this case
-
-				}
-
-			}
-
-			console.warn( 'THREE.KeyframeTrack:', message );
-			return this;
-
-		}
-
-		this.createInterpolant = factoryMethod;
-
-		return this;
-
-	}
-
-	getInterpolation() {
-
-		switch ( this.createInterpolant ) {
-
-			case this.InterpolantFactoryMethodDiscrete:
-
-				return InterpolateDiscrete;
-
-			case this.InterpolantFactoryMethodLinear:
-
-				return InterpolateLinear;
-
-			case this.InterpolantFactoryMethodSmooth:
-
-				return InterpolateSmooth;
-
-		}
-
-	}
-
-	getValueSize() {
-
-		return this.values.length / this.times.length;
-
-	}
-
-	// move all keyframes either forwards or backwards in time
-	shift( timeOffset ) {
-
-		if ( timeOffset !== 0.0 ) {
-
-			const times = this.times;
-
-			for ( let i = 0, n = times.length; i !== n; ++ i ) {
-
-				times[ i ] += timeOffset;
-
-			}
-
-		}
-
-		return this;
-
-	}
-
-	// scale all keyframe times by a factor (useful for frame <-> seconds conversions)
-	scale( timeScale ) {
-
-		if ( timeScale !== 1.0 ) {
-
-			const times = this.times;
-
-			for ( let i = 0, n = times.length; i !== n; ++ i ) {
-
-				times[ i ] *= timeScale;
-
-			}
-
-		}
-
-		return this;
-
-	}
-
-	// removes keyframes before and after animation without changing any values within the range [startTime, endTime].
-	// IMPORTANT: We do not shift around keys to the start of the track time, because for interpolated keys this will change their values
-	trim( startTime, endTime ) {
-
-		const times = this.times,
-			nKeys = times.length;
-
-		let from = 0,
-			to = nKeys - 1;
-
-		while ( from !== nKeys && times[ from ] < startTime ) {
-
-			++ from;
-
-		}
-
-		while ( to !== - 1 && times[ to ] > endTime ) {
-
-			-- to;
-
-		}
-
-		++ to; // inclusive -> exclusive bound
-
-		if ( from !== 0 || to !== nKeys ) {
-
-			// empty tracks are forbidden, so keep at least one keyframe
-			if ( from >= to ) {
-
-				to = Math.max( to, 1 );
-				from = to - 1;
-
-			}
-
-			const stride = this.getValueSize();
-			this.times = arraySlice( times, from, to );
-			this.values = arraySlice( this.values, from * stride, to * stride );
-
-		}
-
-		return this;
-
-	}
-
-	// ensure we do not get a GarbageInGarbageOut situation, make sure tracks are at least minimally viable
-	validate() {
-
-		let valid = true;
-
-		const valueSize = this.getValueSize();
-		if ( valueSize - Math.floor( valueSize ) !== 0 ) {
-
-			console.error( 'THREE.KeyframeTrack: Invalid value size in track.', this );
-			valid = false;
-
-		}
-
-		const times = this.times,
-			values = this.values,
-
-			nKeys = times.length;
-
-		if ( nKeys === 0 ) {
-
-			console.error( 'THREE.KeyframeTrack: Track is empty.', this );
-			valid = false;
-
-		}
-
-		let prevTime = null;
-
-		for ( let i = 0; i !== nKeys; i ++ ) {
-
-			const currTime = times[ i ];
-
-			if ( typeof currTime === 'number' && isNaN( currTime ) ) {
-
-				console.error( 'THREE.KeyframeTrack: Time is not a valid number.', this, i, currTime );
-				valid = false;
-				break;
-
-			}
-
-			if ( prevTime !== null && prevTime > currTime ) {
-
-				console.error( 'THREE.KeyframeTrack: Out of order keys.', this, i, currTime, prevTime );
-				valid = false;
-				break;
-
-			}
-
-			prevTime = currTime;
-
-		}
-
-		if ( values !== undefined ) {
-
-			if ( isTypedArray( values ) ) {
-
-				for ( let i = 0, n = values.length; i !== n; ++ i ) {
-
-					const value = values[ i ];
-
-					if ( isNaN( value ) ) {
-
-						console.error( 'THREE.KeyframeTrack: Value is not a valid number.', this, i, value );
-						valid = false;
-						break;
-
-					}
-
-				}
-
-			}
-
-		}
-
-		return valid;
-
-	}
-
-	// removes equivalent sequential keys as common in morph target sequences
-	// (0,0,0,0,1,1,1,0,0,0,0,0,0,0) --> (0,0,1,1,0,0)
-	optimize() {
-
-		// times or values may be shared with other tracks, so overwriting is unsafe
-		const times = arraySlice( this.times ),
-			values = arraySlice( this.values ),
-			stride = this.getValueSize(),
-
-			smoothInterpolation = this.getInterpolation() === InterpolateSmooth,
-
-			lastIndex = times.length - 1;
-
-		let writeIndex = 1;
-
-		for ( let i = 1; i < lastIndex; ++ i ) {
-
-			let keep = false;
-
-			const time = times[ i ];
-			const timeNext = times[ i + 1 ];
-
-			// remove adjacent keyframes scheduled at the same time
-
-			if ( time !== timeNext && ( i !== 1 || time !== times[ 0 ] ) ) {
-
-				if ( ! smoothInterpolation ) {
-
-					// remove unnecessary keyframes same as their neighbors
-
-					const offset = i * stride,
-						offsetP = offset - stride,
-						offsetN = offset + stride;
-
-					for ( let j = 0; j !== stride; ++ j ) {
-
-						const value = values[ offset + j ];
-
-						if ( value !== values[ offsetP + j ] ||
-							value !== values[ offsetN + j ] ) {
-
-							keep = true;
-							break;
-
-						}
-
-					}
-
-				} else {
-
-					keep = true;
-
-				}
-
-			}
-
-			// in-place compaction
-
-			if ( keep ) {
-
-				if ( i !== writeIndex ) {
-
-					times[ writeIndex ] = times[ i ];
-
-					const readOffset = i * stride,
-						writeOffset = writeIndex * stride;
-
-					for ( let j = 0; j !== stride; ++ j ) {
-
-						values[ writeOffset + j ] = values[ readOffset + j ];
-
-					}
-
-				}
-
-				++ writeIndex;
-
-			}
-
-		}
-
-		// flush last keyframe (compaction looks ahead)
-
-		if ( lastIndex > 0 ) {
-
-			times[ writeIndex ] = times[ lastIndex ];
-
-			for ( let readOffset = lastIndex * stride, writeOffset = writeIndex * stride, j = 0; j !== stride; ++ j ) {
-
-				values[ writeOffset + j ] = values[ readOffset + j ];
-
-			}
-
-			++ writeIndex;
-
-		}
-
-		if ( writeIndex !== times.length ) {
-
-			this.times = arraySlice( times, 0, writeIndex );
-			this.values = arraySlice( values, 0, writeIndex * stride );
-
-		} else {
-
-			this.times = times;
-			this.values = values;
-
-		}
-
-		return this;
-
-	}
-
-	clone() {
-
-		const times = arraySlice( this.times, 0 );
-		const values = arraySlice( this.values, 0 );
-
-		const TypedKeyframeTrack = this.constructor;
-		const track = new TypedKeyframeTrack( this.name, times, values );
-
-		// Interpolant argument to constructor is not saved, so copy the factory method directly.
-		track.createInterpolant = this.createInterpolant;
-
-		return track;
-
-	}
-
-}
-
-KeyframeTrack.prototype.TimeBufferType = Float32Array;
-KeyframeTrack.prototype.ValueBufferType = Float32Array;
-KeyframeTrack.prototype.DefaultInterpolation = InterpolateLinear;
-
-/**
- * A Track of Boolean keyframe values.
- */
-class BooleanKeyframeTrack extends KeyframeTrack {}
-
-BooleanKeyframeTrack.prototype.ValueTypeName = 'bool';
-BooleanKeyframeTrack.prototype.ValueBufferType = Array;
-BooleanKeyframeTrack.prototype.DefaultInterpolation = InterpolateDiscrete;
-BooleanKeyframeTrack.prototype.InterpolantFactoryMethodLinear = undefined;
-BooleanKeyframeTrack.prototype.InterpolantFactoryMethodSmooth = undefined;
-
-/**
- * A Track of keyframe values that represent color.
- */
-class ColorKeyframeTrack extends KeyframeTrack {}
-
-ColorKeyframeTrack.prototype.ValueTypeName = 'color';
-
-/**
- * A Track of numeric keyframe values.
- */
-class NumberKeyframeTrack extends KeyframeTrack {}
-
-NumberKeyframeTrack.prototype.ValueTypeName = 'number';
-
-/**
- * Spherical linear unit quaternion interpolant.
- */
-
-class QuaternionLinearInterpolant extends Interpolant {
-
-	constructor( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
-
-		super( parameterPositions, sampleValues, sampleSize, resultBuffer );
-
-	}
-
-	interpolate_( i1, t0, t, t1 ) {
-
-		const result = this.resultBuffer,
-			values = this.sampleValues,
-			stride = this.valueSize,
-
-			alpha = ( t - t0 ) / ( t1 - t0 );
-
-		let offset = i1 * stride;
-
-		for ( let end = offset + stride; offset !== end; offset += 4 ) {
-
-			Quaternion.slerpFlat( result, 0, values, offset - stride, values, offset, alpha );
-
-		}
-
-		return result;
-
-	}
-
-}
-
-/**
- * A Track of quaternion keyframe values.
- */
-class QuaternionKeyframeTrack extends KeyframeTrack {
-
-	InterpolantFactoryMethodLinear( result ) {
-
-		return new QuaternionLinearInterpolant( this.times, this.values, this.getValueSize(), result );
-
-	}
-
-}
-
-QuaternionKeyframeTrack.prototype.ValueTypeName = 'quaternion';
-// ValueBufferType is inherited
-QuaternionKeyframeTrack.prototype.DefaultInterpolation = InterpolateLinear;
-QuaternionKeyframeTrack.prototype.InterpolantFactoryMethodSmooth = undefined;
-
-/**
- * A Track that interpolates Strings
- */
-class StringKeyframeTrack extends KeyframeTrack {}
-
-StringKeyframeTrack.prototype.ValueTypeName = 'string';
-StringKeyframeTrack.prototype.ValueBufferType = Array;
-StringKeyframeTrack.prototype.DefaultInterpolation = InterpolateDiscrete;
-StringKeyframeTrack.prototype.InterpolantFactoryMethodLinear = undefined;
-StringKeyframeTrack.prototype.InterpolantFactoryMethodSmooth = undefined;
-
-/**
- * A Track of vectored keyframe values.
- */
-class VectorKeyframeTrack extends KeyframeTrack {}
-
-VectorKeyframeTrack.prototype.ValueTypeName = 'vector';
-
-class AnimationClip {
-
-	constructor( name, duration = - 1, tracks, blendMode = NormalAnimationBlendMode ) {
-
-		this.name = name;
-		this.tracks = tracks;
-		this.duration = duration;
-		this.blendMode = blendMode;
-
-		this.uuid = generateUUID();
-
-		// this means it should figure out its duration by scanning the tracks
-		if ( this.duration < 0 ) {
-
-			this.resetDuration();
-
-		}
-
-	}
-
-
-	static parse( json ) {
-
-		const tracks = [],
-			jsonTracks = json.tracks,
-			frameTime = 1.0 / ( json.fps || 1.0 );
-
-		for ( let i = 0, n = jsonTracks.length; i !== n; ++ i ) {
-
-			tracks.push( parseKeyframeTrack( jsonTracks[ i ] ).scale( frameTime ) );
-
-		}
-
-		const clip = new this( json.name, json.duration, tracks, json.blendMode );
-		clip.uuid = json.uuid;
-
-		return clip;
-
-	}
-
-	static toJSON( clip ) {
-
-		const tracks = [],
-			clipTracks = clip.tracks;
-
-		const json = {
-
-			'name': clip.name,
-			'duration': clip.duration,
-			'tracks': tracks,
-			'uuid': clip.uuid,
-			'blendMode': clip.blendMode
-
-		};
-
-		for ( let i = 0, n = clipTracks.length; i !== n; ++ i ) {
-
-			tracks.push( KeyframeTrack.toJSON( clipTracks[ i ] ) );
-
-		}
-
-		return json;
-
-	}
-
-	static CreateFromMorphTargetSequence( name, morphTargetSequence, fps, noLoop ) {
-
-		const numMorphTargets = morphTargetSequence.length;
-		const tracks = [];
-
-		for ( let i = 0; i < numMorphTargets; i ++ ) {
-
-			let times = [];
-			let values = [];
-
-			times.push(
-				( i + numMorphTargets - 1 ) % numMorphTargets,
-				i,
-				( i + 1 ) % numMorphTargets );
-
-			values.push( 0, 1, 0 );
-
-			const order = getKeyframeOrder( times );
-			times = sortedArray( times, 1, order );
-			values = sortedArray( values, 1, order );
-
-			// if there is a key at the first frame, duplicate it as the
-			// last frame as well for perfect loop.
-			if ( ! noLoop && times[ 0 ] === 0 ) {
-
-				times.push( numMorphTargets );
-				values.push( values[ 0 ] );
-
-			}
-
-			tracks.push(
-				new NumberKeyframeTrack(
-					'.morphTargetInfluences[' + morphTargetSequence[ i ].name + ']',
-					times, values
-				).scale( 1.0 / fps ) );
-
-		}
-
-		return new this( name, - 1, tracks );
-
-	}
-
-	static findByName( objectOrClipArray, name ) {
-
-		let clipArray = objectOrClipArray;
-
-		if ( ! Array.isArray( objectOrClipArray ) ) {
-
-			const o = objectOrClipArray;
-			clipArray = o.geometry && o.geometry.animations || o.animations;
-
-		}
-
-		for ( let i = 0; i < clipArray.length; i ++ ) {
-
-			if ( clipArray[ i ].name === name ) {
-
-				return clipArray[ i ];
-
-			}
-
-		}
-
-		return null;
-
-	}
-
-	static CreateClipsFromMorphTargetSequences( morphTargets, fps, noLoop ) {
-
-		const animationToMorphTargets = {};
-
-		// tested with https://regex101.com/ on trick sequences
-		// such flamingo_flyA_003, flamingo_run1_003, crdeath0059
-		const pattern = /^([\w-]*?)([\d]+)$/;
-
-		// sort morph target names into animation groups based
-		// patterns like Walk_001, Walk_002, Run_001, Run_002
-		for ( let i = 0, il = morphTargets.length; i < il; i ++ ) {
-
-			const morphTarget = morphTargets[ i ];
-			const parts = morphTarget.name.match( pattern );
-
-			if ( parts && parts.length > 1 ) {
-
-				const name = parts[ 1 ];
-
-				let animationMorphTargets = animationToMorphTargets[ name ];
-
-				if ( ! animationMorphTargets ) {
-
-					animationToMorphTargets[ name ] = animationMorphTargets = [];
-
-				}
-
-				animationMorphTargets.push( morphTarget );
-
-			}
-
-		}
-
-		const clips = [];
-
-		for ( const name in animationToMorphTargets ) {
-
-			clips.push( this.CreateFromMorphTargetSequence( name, animationToMorphTargets[ name ], fps, noLoop ) );
-
-		}
-
-		return clips;
-
-	}
-
-	// parse the animation.hierarchy format
-	static parseAnimation( animation, bones ) {
-
-		if ( ! animation ) {
-
-			console.error( 'THREE.AnimationClip: No animation in JSONLoader data.' );
-			return null;
-
-		}
-
-		const addNonemptyTrack = function ( trackType, trackName, animationKeys, propertyName, destTracks ) {
-
-			// only return track if there are actually keys.
-			if ( animationKeys.length !== 0 ) {
-
-				const times = [];
-				const values = [];
-
-				flattenJSON( animationKeys, times, values, propertyName );
-
-				// empty keys are filtered out, so check again
-				if ( times.length !== 0 ) {
-
-					destTracks.push( new trackType( trackName, times, values ) );
-
-				}
-
-			}
-
-		};
-
-		const tracks = [];
-
-		const clipName = animation.name || 'default';
-		const fps = animation.fps || 30;
-		const blendMode = animation.blendMode;
-
-		// automatic length determination in AnimationClip.
-		let duration = animation.length || - 1;
-
-		const hierarchyTracks = animation.hierarchy || [];
-
-		for ( let h = 0; h < hierarchyTracks.length; h ++ ) {
-
-			const animationKeys = hierarchyTracks[ h ].keys;
-
-			// skip empty tracks
-			if ( ! animationKeys || animationKeys.length === 0 ) continue;
-
-			// process morph targets
-			if ( animationKeys[ 0 ].morphTargets ) {
-
-				// figure out all morph targets used in this track
-				const morphTargetNames = {};
-
-				let k;
-
-				for ( k = 0; k < animationKeys.length; k ++ ) {
-
-					if ( animationKeys[ k ].morphTargets ) {
-
-						for ( let m = 0; m < animationKeys[ k ].morphTargets.length; m ++ ) {
-
-							morphTargetNames[ animationKeys[ k ].morphTargets[ m ] ] = - 1;
-
-						}
-
-					}
-
-				}
-
-				// create a track for each morph target with all zero
-				// morphTargetInfluences except for the keys in which
-				// the morphTarget is named.
-				for ( const morphTargetName in morphTargetNames ) {
-
-					const times = [];
-					const values = [];
-
-					for ( let m = 0; m !== animationKeys[ k ].morphTargets.length; ++ m ) {
-
-						const animationKey = animationKeys[ k ];
-
-						times.push( animationKey.time );
-						values.push( ( animationKey.morphTarget === morphTargetName ) ? 1 : 0 );
-
-					}
-
-					tracks.push( new NumberKeyframeTrack( '.morphTargetInfluence[' + morphTargetName + ']', times, values ) );
-
-				}
-
-				duration = morphTargetNames.length * fps;
-
-			} else {
-
-				// ...assume skeletal animation
-
-				const boneName = '.bones[' + bones[ h ].name + ']';
-
-				addNonemptyTrack(
-					VectorKeyframeTrack, boneName + '.position',
-					animationKeys, 'pos', tracks );
-
-				addNonemptyTrack(
-					QuaternionKeyframeTrack, boneName + '.quaternion',
-					animationKeys, 'rot', tracks );
-
-				addNonemptyTrack(
-					VectorKeyframeTrack, boneName + '.scale',
-					animationKeys, 'scl', tracks );
-
-			}
-
-		}
-
-		if ( tracks.length === 0 ) {
-
-			return null;
-
-		}
-
-		const clip = new this( clipName, duration, tracks, blendMode );
-
-		return clip;
-
-	}
-
-	resetDuration() {
-
-		const tracks = this.tracks;
-		let duration = 0;
-
-		for ( let i = 0, n = tracks.length; i !== n; ++ i ) {
-
-			const track = this.tracks[ i ];
-
-			duration = Math.max( duration, track.times[ track.times.length - 1 ] );
-
-		}
-
-		this.duration = duration;
-
-		return this;
-
-	}
-
-	trim() {
-
-		for ( let i = 0; i < this.tracks.length; i ++ ) {
-
-			this.tracks[ i ].trim( 0, this.duration );
-
-		}
-
-		return this;
-
-	}
-
-	validate() {
-
-		let valid = true;
-
-		for ( let i = 0; i < this.tracks.length; i ++ ) {
-
-			valid = valid && this.tracks[ i ].validate();
-
-		}
-
-		return valid;
-
-	}
-
-	optimize() {
-
-		for ( let i = 0; i < this.tracks.length; i ++ ) {
-
-			this.tracks[ i ].optimize();
-
-		}
-
-		return this;
-
-	}
-
-	clone() {
-
-		const tracks = [];
-
-		for ( let i = 0; i < this.tracks.length; i ++ ) {
-
-			tracks.push( this.tracks[ i ].clone() );
-
-		}
-
-		return new this.constructor( this.name, this.duration, tracks, this.blendMode );
-
-	}
-
-	toJSON() {
-
-		return this.constructor.toJSON( this );
-
-	}
-
-}
-
-function getTrackTypeForValueTypeName( typeName ) {
-
-	switch ( typeName.toLowerCase() ) {
-
-		case 'scalar':
-		case 'double':
-		case 'float':
-		case 'number':
-		case 'integer':
-
-			return NumberKeyframeTrack;
-
-		case 'vector':
-		case 'vector2':
-		case 'vector3':
-		case 'vector4':
-
-			return VectorKeyframeTrack;
-
-		case 'color':
-
-			return ColorKeyframeTrack;
-
-		case 'quaternion':
-
-			return QuaternionKeyframeTrack;
-
-		case 'bool':
-		case 'boolean':
-
-			return BooleanKeyframeTrack;
-
-		case 'string':
-
-			return StringKeyframeTrack;
-
-	}
-
-	throw new Error( 'THREE.KeyframeTrack: Unsupported typeName: ' + typeName );
-
-}
-
-function parseKeyframeTrack( json ) {
-
-	if ( json.type === undefined ) {
-
-		throw new Error( 'THREE.KeyframeTrack: track type undefined, can not parse' );
-
-	}
-
-	const trackType = getTrackTypeForValueTypeName( json.type );
-
-	if ( json.times === undefined ) {
-
-		const times = [], values = [];
-
-		flattenJSON( json.keys, times, values, 'value' );
-
-		json.times = times;
-		json.values = values;
-
-	}
-
-	// derived classes can define a static parse method
-	if ( trackType.parse !== undefined ) {
-
-		return trackType.parse( json );
-
-	} else {
-
-		// by default, we assume a constructor compatible with the base
-		return new trackType( json.name, json.times, json.values, json.interpolation );
-
-	}
-
-}
-
 const Cache = {
 
 	enabled: false,
@@ -30880,282 +28959,6 @@ class Loader {
 	setRequestHeader( requestHeader ) {
 
 		this.requestHeader = requestHeader;
-		return this;
-
-	}
-
-}
-
-const loading = {};
-
-class HttpError extends Error {
-
-	constructor( message, response ) {
-
-		super( message );
-		this.response = response;
-
-	}
-
-}
-
-class FileLoader extends Loader {
-
-	constructor( manager ) {
-
-		super( manager );
-
-	}
-
-	load( url, onLoad, onProgress, onError ) {
-
-		if ( url === undefined ) url = '';
-
-		if ( this.path !== undefined ) url = this.path + url;
-
-		url = this.manager.resolveURL( url );
-
-		const cached = Cache.get( url );
-
-		if ( cached !== undefined ) {
-
-			this.manager.itemStart( url );
-
-			setTimeout( () => {
-
-				if ( onLoad ) onLoad( cached );
-
-				this.manager.itemEnd( url );
-
-			}, 0 );
-
-			return cached;
-
-		}
-
-		// Check if request is duplicate
-
-		if ( loading[ url ] !== undefined ) {
-
-			loading[ url ].push( {
-
-				onLoad: onLoad,
-				onProgress: onProgress,
-				onError: onError
-
-			} );
-
-			return;
-
-		}
-
-		// Initialise array for duplicate requests
-		loading[ url ] = [];
-
-		loading[ url ].push( {
-			onLoad: onLoad,
-			onProgress: onProgress,
-			onError: onError,
-		} );
-
-		// create request
-		const req = new Request( url, {
-			headers: new Headers( this.requestHeader ),
-			credentials: this.withCredentials ? 'include' : 'same-origin',
-			// An abort controller could be added within a future PR
-		} );
-
-		// record states ( avoid data race )
-		const mimeType = this.mimeType;
-		const responseType = this.responseType;
-
-		// start the fetch
-		fetch( req )
-			.then( response => {
-
-				if ( response.status === 200 || response.status === 0 ) {
-
-					// Some browsers return HTTP Status 0 when using non-http protocol
-					// e.g. 'file://' or 'data://'. Handle as success.
-
-					if ( response.status === 0 ) {
-
-						console.warn( 'THREE.FileLoader: HTTP Status 0 received.' );
-
-					}
-
-					// Workaround: Checking if response.body === undefined for Alipay browser #23548
-
-					if ( typeof ReadableStream === 'undefined' || response.body === undefined || response.body.getReader === undefined ) {
-
-						return response;
-
-					}
-
-					const callbacks = loading[ url ];
-					const reader = response.body.getReader();
-					const contentLength = response.headers.get( 'Content-Length' );
-					const total = contentLength ? parseInt( contentLength ) : 0;
-					const lengthComputable = total !== 0;
-					let loaded = 0;
-
-					// periodically read data into the new stream tracking while download progress
-					const stream = new ReadableStream( {
-						start( controller ) {
-
-							readData();
-
-							function readData() {
-
-								reader.read().then( ( { done, value } ) => {
-
-									if ( done ) {
-
-										controller.close();
-
-									} else {
-
-										loaded += value.byteLength;
-
-										const event = new ProgressEvent( 'progress', { lengthComputable, loaded, total } );
-										for ( let i = 0, il = callbacks.length; i < il; i ++ ) {
-
-											const callback = callbacks[ i ];
-											if ( callback.onProgress ) callback.onProgress( event );
-
-										}
-
-										controller.enqueue( value );
-										readData();
-
-									}
-
-								} );
-
-							}
-
-						}
-
-					} );
-
-					return new Response( stream );
-
-				} else {
-
-					throw new HttpError( `fetch for "${response.url}" responded with ${response.status}: ${response.statusText}`, response );
-
-				}
-
-			} )
-			.then( response => {
-
-				switch ( responseType ) {
-
-					case 'arraybuffer':
-
-						return response.arrayBuffer();
-
-					case 'blob':
-
-						return response.blob();
-
-					case 'document':
-
-						return response.text()
-							.then( text => {
-
-								const parser = new DOMParser();
-								return parser.parseFromString( text, mimeType );
-
-							} );
-
-					case 'json':
-
-						return response.json();
-
-					default:
-
-						if ( mimeType === undefined ) {
-
-							return response.text();
-
-						} else {
-
-							// sniff encoding
-							const re = /charset="?([^;"\s]*)"?/i;
-							const exec = re.exec( mimeType );
-							const label = exec && exec[ 1 ] ? exec[ 1 ].toLowerCase() : undefined;
-							const decoder = new TextDecoder( label );
-							return response.arrayBuffer().then( ab => decoder.decode( ab ) );
-
-						}
-
-				}
-
-			} )
-			.then( data => {
-
-				// Add to cache only on HTTP success, so that we do not cache
-				// error response bodies as proper responses to requests.
-				Cache.add( url, data );
-
-				const callbacks = loading[ url ];
-				delete loading[ url ];
-
-				for ( let i = 0, il = callbacks.length; i < il; i ++ ) {
-
-					const callback = callbacks[ i ];
-					if ( callback.onLoad ) callback.onLoad( data );
-
-				}
-
-			} )
-			.catch( err => {
-
-				// Abort errors and other errors are handled the same
-
-				const callbacks = loading[ url ];
-
-				if ( callbacks === undefined ) {
-
-					// When onLoad was called and url was deleted in `loading`
-					this.manager.itemError( url );
-					throw err;
-
-				}
-
-				delete loading[ url ];
-
-				for ( let i = 0, il = callbacks.length; i < il; i ++ ) {
-
-					const callback = callbacks[ i ];
-					if ( callback.onError ) callback.onError( err );
-
-				}
-
-				this.manager.itemError( url );
-
-			} )
-			.finally( () => {
-
-				this.manager.itemEnd( url );
-
-			} );
-
-		this.manager.itemStart( url );
-
-	}
-
-	setResponseType( value ) {
-
-		this.responseType = value;
-		return this;
-
-	}
-
-	setMimeType( value ) {
-
-		this.mimeType = value;
 		return this;
 
 	}
@@ -31851,7 +29654,8 @@ class Terrain {
     createBasicTerrain() {
 
         const groundTerrain = new TextureLoader().load('https://i.postimg.cc/VvNZKKnB/grasslight-big.jpg');
-        const groundGeometry = new PlaneGeometry(1000, 1000);
+        //const groundGeometry = new PlaneGeometry(1000, 1000);
+        const groundGeometry = new BoxGeometry(1000, 10, 1000);
         const groundMaterial = new MeshPhongMaterial({
             color: 0xffffff,
             map: groundTerrain
@@ -31859,14 +29663,13 @@ class Terrain {
 
         //const groundMaterial = new MeshBasicMaterial({color: 'green', side: DoubleSide});
 
-        const ground = new Mesh(groundGeometry, groundMaterial);
-        ground.rotation.x = - Math.PI/2;
-        ground.material.map.repeat.set( 512, 512 );
-        ground.material.map.wrapS = RepeatWrapping;
-        ground.material.map.wrapT = RepeatWrapping;
-        ground.material.map.encoding = sRGBEncoding;
+        this.ground = new Mesh(groundGeometry, groundMaterial);
+        this.ground.material.map.repeat.set( 512, 512 );
+        this.ground.material.map.wrapS = RepeatWrapping;
+        this.ground.material.map.wrapT = RepeatWrapping;
+        this.ground.material.map.encoding = sRGBEncoding;
         //ground.receiveShadow = true;
-        this.scene.add(ground);
+        this.scene.add(this.ground);
     }
 
 
@@ -33231,1332 +31034,263 @@ class PointerLockControls extends EventDispatcher {
 
 }
 
-const _normalData = [
-	[ - 0.525731, 0.000000, 0.850651 ], [ - 0.442863, 0.238856, 0.864188 ],
-	[ - 0.295242, 0.000000, 0.955423 ], [ - 0.309017, 0.500000, 0.809017 ],
-	[ - 0.162460, 0.262866, 0.951056 ], [ 0.000000, 0.000000, 1.000000 ],
-	[ 0.000000, 0.850651, 0.525731 ], [ - 0.147621, 0.716567, 0.681718 ],
-	[ 0.147621, 0.716567, 0.681718 ], [ 0.000000, 0.525731, 0.850651 ],
-	[ 0.309017, 0.500000, 0.809017 ], [ 0.525731, 0.000000, 0.850651 ],
-	[ 0.295242, 0.000000, 0.955423 ], [ 0.442863, 0.238856, 0.864188 ],
-	[ 0.162460, 0.262866, 0.951056 ], [ - 0.681718, 0.147621, 0.716567 ],
-	[ - 0.809017, 0.309017, 0.500000 ], [ - 0.587785, 0.425325, 0.688191 ],
-	[ - 0.850651, 0.525731, 0.000000 ], [ - 0.864188, 0.442863, 0.238856 ],
-	[ - 0.716567, 0.681718, 0.147621 ], [ - 0.688191, 0.587785, 0.425325 ],
-	[ - 0.500000, 0.809017, 0.309017 ], [ - 0.238856, 0.864188, 0.442863 ],
-	[ - 0.425325, 0.688191, 0.587785 ], [ - 0.716567, 0.681718, - 0.147621 ],
-	[ - 0.500000, 0.809017, - 0.309017 ], [ - 0.525731, 0.850651, 0.000000 ],
-	[ 0.000000, 0.850651, - 0.525731 ], [ - 0.238856, 0.864188, - 0.442863 ],
-	[ 0.000000, 0.955423, - 0.295242 ], [ - 0.262866, 0.951056, - 0.162460 ],
-	[ 0.000000, 1.000000, 0.000000 ], [ 0.000000, 0.955423, 0.295242 ],
-	[ - 0.262866, 0.951056, 0.162460 ], [ 0.238856, 0.864188, 0.442863 ],
-	[ 0.262866, 0.951056, 0.162460 ], [ 0.500000, 0.809017, 0.309017 ],
-	[ 0.238856, 0.864188, - 0.442863 ], [ 0.262866, 0.951056, - 0.162460 ],
-	[ 0.500000, 0.809017, - 0.309017 ], [ 0.850651, 0.525731, 0.000000 ],
-	[ 0.716567, 0.681718, 0.147621 ], [ 0.716567, 0.681718, - 0.147621 ],
-	[ 0.525731, 0.850651, 0.000000 ], [ 0.425325, 0.688191, 0.587785 ],
-	[ 0.864188, 0.442863, 0.238856 ], [ 0.688191, 0.587785, 0.425325 ],
-	[ 0.809017, 0.309017, 0.500000 ], [ 0.681718, 0.147621, 0.716567 ],
-	[ 0.587785, 0.425325, 0.688191 ], [ 0.955423, 0.295242, 0.000000 ],
-	[ 1.000000, 0.000000, 0.000000 ], [ 0.951056, 0.162460, 0.262866 ],
-	[ 0.850651, - 0.525731, 0.000000 ], [ 0.955423, - 0.295242, 0.000000 ],
-	[ 0.864188, - 0.442863, 0.238856 ], [ 0.951056, - 0.162460, 0.262866 ],
-	[ 0.809017, - 0.309017, 0.500000 ], [ 0.681718, - 0.147621, 0.716567 ],
-	[ 0.850651, 0.000000, 0.525731 ], [ 0.864188, 0.442863, - 0.238856 ],
-	[ 0.809017, 0.309017, - 0.500000 ], [ 0.951056, 0.162460, - 0.262866 ],
-	[ 0.525731, 0.000000, - 0.850651 ], [ 0.681718, 0.147621, - 0.716567 ],
-	[ 0.681718, - 0.147621, - 0.716567 ], [ 0.850651, 0.000000, - 0.525731 ],
-	[ 0.809017, - 0.309017, - 0.500000 ], [ 0.864188, - 0.442863, - 0.238856 ],
-	[ 0.951056, - 0.162460, - 0.262866 ], [ 0.147621, 0.716567, - 0.681718 ],
-	[ 0.309017, 0.500000, - 0.809017 ], [ 0.425325, 0.688191, - 0.587785 ],
-	[ 0.442863, 0.238856, - 0.864188 ], [ 0.587785, 0.425325, - 0.688191 ],
-	[ 0.688191, 0.587785, - 0.425325 ], [ - 0.147621, 0.716567, - 0.681718 ],
-	[ - 0.309017, 0.500000, - 0.809017 ], [ 0.000000, 0.525731, - 0.850651 ],
-	[ - 0.525731, 0.000000, - 0.850651 ], [ - 0.442863, 0.238856, - 0.864188 ],
-	[ - 0.295242, 0.000000, - 0.955423 ], [ - 0.162460, 0.262866, - 0.951056 ],
-	[ 0.000000, 0.000000, - 1.000000 ], [ 0.295242, 0.000000, - 0.955423 ],
-	[ 0.162460, 0.262866, - 0.951056 ], [ - 0.442863, - 0.238856, - 0.864188 ],
-	[ - 0.309017, - 0.500000, - 0.809017 ], [ - 0.162460, - 0.262866, - 0.951056 ],
-	[ 0.000000, - 0.850651, - 0.525731 ], [ - 0.147621, - 0.716567, - 0.681718 ],
-	[ 0.147621, - 0.716567, - 0.681718 ], [ 0.000000, - 0.525731, - 0.850651 ],
-	[ 0.309017, - 0.500000, - 0.809017 ], [ 0.442863, - 0.238856, - 0.864188 ],
-	[ 0.162460, - 0.262866, - 0.951056 ], [ 0.238856, - 0.864188, - 0.442863 ],
-	[ 0.500000, - 0.809017, - 0.309017 ], [ 0.425325, - 0.688191, - 0.587785 ],
-	[ 0.716567, - 0.681718, - 0.147621 ], [ 0.688191, - 0.587785, - 0.425325 ],
-	[ 0.587785, - 0.425325, - 0.688191 ], [ 0.000000, - 0.955423, - 0.295242 ],
-	[ 0.000000, - 1.000000, 0.000000 ], [ 0.262866, - 0.951056, - 0.162460 ],
-	[ 0.000000, - 0.850651, 0.525731 ], [ 0.000000, - 0.955423, 0.295242 ],
-	[ 0.238856, - 0.864188, 0.442863 ], [ 0.262866, - 0.951056, 0.162460 ],
-	[ 0.500000, - 0.809017, 0.309017 ], [ 0.716567, - 0.681718, 0.147621 ],
-	[ 0.525731, - 0.850651, 0.000000 ], [ - 0.238856, - 0.864188, - 0.442863 ],
-	[ - 0.500000, - 0.809017, - 0.309017 ], [ - 0.262866, - 0.951056, - 0.162460 ],
-	[ - 0.850651, - 0.525731, 0.000000 ], [ - 0.716567, - 0.681718, - 0.147621 ],
-	[ - 0.716567, - 0.681718, 0.147621 ], [ - 0.525731, - 0.850651, 0.000000 ],
-	[ - 0.500000, - 0.809017, 0.309017 ], [ - 0.238856, - 0.864188, 0.442863 ],
-	[ - 0.262866, - 0.951056, 0.162460 ], [ - 0.864188, - 0.442863, 0.238856 ],
-	[ - 0.809017, - 0.309017, 0.500000 ], [ - 0.688191, - 0.587785, 0.425325 ],
-	[ - 0.681718, - 0.147621, 0.716567 ], [ - 0.442863, - 0.238856, 0.864188 ],
-	[ - 0.587785, - 0.425325, 0.688191 ], [ - 0.309017, - 0.500000, 0.809017 ],
-	[ - 0.147621, - 0.716567, 0.681718 ], [ - 0.425325, - 0.688191, 0.587785 ],
-	[ - 0.162460, - 0.262866, 0.951056 ], [ 0.442863, - 0.238856, 0.864188 ],
-	[ 0.162460, - 0.262866, 0.951056 ], [ 0.309017, - 0.500000, 0.809017 ],
-	[ 0.147621, - 0.716567, 0.681718 ], [ 0.000000, - 0.525731, 0.850651 ],
-	[ 0.425325, - 0.688191, 0.587785 ], [ 0.587785, - 0.425325, 0.688191 ],
-	[ 0.688191, - 0.587785, 0.425325 ], [ - 0.955423, 0.295242, 0.000000 ],
-	[ - 0.951056, 0.162460, 0.262866 ], [ - 1.000000, 0.000000, 0.000000 ],
-	[ - 0.850651, 0.000000, 0.525731 ], [ - 0.955423, - 0.295242, 0.000000 ],
-	[ - 0.951056, - 0.162460, 0.262866 ], [ - 0.864188, 0.442863, - 0.238856 ],
-	[ - 0.951056, 0.162460, - 0.262866 ], [ - 0.809017, 0.309017, - 0.500000 ],
-	[ - 0.864188, - 0.442863, - 0.238856 ], [ - 0.951056, - 0.162460, - 0.262866 ],
-	[ - 0.809017, - 0.309017, - 0.500000 ], [ - 0.681718, 0.147621, - 0.716567 ],
-	[ - 0.681718, - 0.147621, - 0.716567 ], [ - 0.850651, 0.000000, - 0.525731 ],
-	[ - 0.688191, 0.587785, - 0.425325 ], [ - 0.587785, 0.425325, - 0.688191 ],
-	[ - 0.425325, 0.688191, - 0.587785 ], [ - 0.425325, - 0.688191, - 0.587785 ],
-	[ - 0.587785, - 0.425325, - 0.688191 ], [ - 0.688191, - 0.587785, - 0.425325 ]
-];
+async function AmmoPhysics() {
 
-class MD2Loader extends Loader {
+	if ('Ammo' in window === false) {
 
-	constructor( manager ) {
-
-		super( manager );
+		console.error('AmmoPhysics: Couldn\'t find Ammo.js');
+		return;
 
 	}
 
-	load( url, onLoad, onProgress, onError ) {
+	const AmmoLib = await Ammo(); // eslint-disable-line no-undef
 
-		const scope = this;
+	const frameRate = 60;
+	const collisionConfiguration = new AmmoLib.btDefaultCollisionConfiguration();
+	const dispatcher = new AmmoLib.btCollisionDispatcher(collisionConfiguration);
+	const broadphase = new AmmoLib.btDbvtBroadphase();
+	const solver = new AmmoLib.btSequentialImpulseConstraintSolver();
+	const world = new AmmoLib.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+	world.setGravity(new AmmoLib.btVector3(0, -9.8, 0));
+	const worldTransform = new AmmoLib.btTransform();
 
-		const loader = new FileLoader( scope.manager );
-		loader.setPath( scope.path );
-		loader.setResponseType( 'arraybuffer' );
-		loader.setRequestHeader( scope.requestHeader );
-		loader.setWithCredentials( scope.withCredentials );
-		loader.load( url, function ( buffer ) {
+	//
 
-			try {
+	function getShape(geometry) {
 
-				onLoad( scope.parse( buffer ) );
+		const parameters = geometry.parameters;
 
-			} catch ( e ) {
+		// TODO change type to is*
 
-				if ( onError ) {
+		if (geometry.type === 'BoxGeometry') {
 
-					onError( e );
+			const sx = parameters.width !== undefined ? parameters.width / 2 : 0.5;
+			const sy = parameters.height !== undefined ? parameters.height / 2 : 0.5;
+			const sz = parameters.depth !== undefined ? parameters.depth / 2 : 0.5;
+			const shape = new AmmoLib.btBoxShape(new AmmoLib.btVector3(sx, sy, sz));
+			shape.setMargin(0.05);
+			return shape;
 
-				} else {
+		} else if (geometry.type === 'SphereGeometry' || geometry.type === 'IcosahedronGeometry') {
 
-					console.error( e );
+			const radius = parameters.radius !== undefined ? parameters.radius : 1;
+			const shape = new AmmoLib.btSphereShape(radius);
+			shape.setMargin(0.05);
+			return shape;
+
+		}
+
+		return null;
+
+	}
+
+	const meshes = [];
+	const meshMap = new WeakMap();
+
+	function addMesh(mesh, mass = 0) {
+
+		const shape = getShape(mesh.geometry);
+		if (shape !== null) {
+
+			if (mesh.isInstancedMesh) {
+
+				handleInstancedMesh(mesh, mass, shape);
+
+			} else if (mesh.isMesh) {
+
+				handleMesh(mesh, mass, shape);
+
+			}
+
+		}
+
+	}
+
+	function handleMesh(mesh, mass, shape) {
+
+		const position = mesh.position;
+		const quaternion = mesh.quaternion;
+		const transform = new AmmoLib.btTransform();
+		transform.setIdentity();
+		transform.setOrigin(new AmmoLib.btVector3(position.x, position.y, position.z));
+		transform.setRotation(new AmmoLib.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
+		const motionState = new AmmoLib.btDefaultMotionState(transform);
+		const localInertia = new AmmoLib.btVector3(0, 0, 0);
+		shape.calculateLocalInertia(mass, localInertia);
+		const rbInfo = new AmmoLib.btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
+		const body = new AmmoLib.btRigidBody(rbInfo);
+		// body.setFriction( 4 );
+		world.addRigidBody(body);
+		if (mass > 0) {
+
+			meshes.push(mesh);
+			meshMap.set(mesh, body);
+
+		}
+
+	}
+
+	function handleInstancedMesh(mesh, mass, shape) {
+
+		const array = mesh.instanceMatrix.array;
+		const bodies = [];
+		for (let i = 0; i < mesh.count; i++) {
+
+			const index = i * 16;
+			const transform = new AmmoLib.btTransform();
+			transform.setFromOpenGLMatrix(array.slice(index, index + 16));
+			const motionState = new AmmoLib.btDefaultMotionState(transform);
+			const localInertia = new AmmoLib.btVector3(0, 0, 0);
+			shape.calculateLocalInertia(mass, localInertia);
+			const rbInfo = new AmmoLib.btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
+			const body = new AmmoLib.btRigidBody(rbInfo);
+			world.addRigidBody(body);
+			bodies.push(body);
+
+		}
+
+		if (mass > 0) {
+
+			meshes.push(mesh);
+			meshMap.set(mesh, bodies);
+
+		}
+
+	}
+
+	//
+
+	function setMeshPosition(mesh, position, index = 0) {
+
+		if (mesh.isInstancedMesh) {
+
+			const bodies = meshMap.get(mesh);
+			const body = bodies[index];
+			body.setAngularVelocity(new AmmoLib.btVector3(0, 0, 0));
+			body.setLinearVelocity(new AmmoLib.btVector3(0, 0, 0));
+			worldTransform.setIdentity();
+			worldTransform.setOrigin(new AmmoLib.btVector3(position.x, position.y, position.z));
+			body.setWorldTransform(worldTransform);
+
+		} else if (mesh.isMesh) {
+
+			const body = meshMap.get(mesh);
+			body.setAngularVelocity(new AmmoLib.btVector3(0, 0, 0));
+			body.setLinearVelocity(new AmmoLib.btVector3(0, 0, 0));
+			worldTransform.setIdentity();
+			worldTransform.setOrigin(new AmmoLib.btVector3(position.x, position.y, position.z));
+			body.setWorldTransform(worldTransform);
+
+		}
+
+	}
+
+	//
+
+	let lastTime = 0;
+
+	function step() {
+
+		const time = performance.now();
+		if (lastTime > 0) {
+
+			const delta = (time - lastTime) / 1000;
+
+			// console.time( 'world.step' );
+			world.stepSimulation(delta, 10);
+			// console.timeEnd( 'world.step' );
+
+		}
+
+		lastTime = time;
+
+		//
+
+		for (let i = 0, l = meshes.length; i < l; i++) {
+
+			const mesh = meshes[i];
+			if (mesh.isInstancedMesh) {
+
+				const array = mesh.instanceMatrix.array;
+				const bodies = meshMap.get(mesh);
+				for (let j = 0; j < bodies.length; j++) {
+
+					const body = bodies[j];
+					const motionState = body.getMotionState();
+					motionState.getWorldTransform(worldTransform);
+					const position = worldTransform.getOrigin();
+					const quaternion = worldTransform.getRotation();
+					compose(position, quaternion, array, j * 16);
 
 				}
 
-				scope.manager.itemError( url );
+				mesh.instanceMatrix.needsUpdate = true;
+
+			} else if (mesh.isMesh) {
+
+				const body = meshMap.get(mesh);
+				const motionState = body.getMotionState();
+				motionState.getWorldTransform(worldTransform);
+				const position = worldTransform.getOrigin();
+				const quaternion = worldTransform.getRotation();
+				mesh.position.set(position.x(), position.y(), position.z());
+				mesh.quaternion.set(quaternion.x(), quaternion.y(), quaternion.z(), quaternion.w());
 
 			}
 
-		}, onProgress, onError );
+		}
 
 	}
 
-	parse( buffer ) {
-
-		const data = new DataView( buffer );
-
-		// http://tfc.duke.free.fr/coding/md2-specs-en.html
-
-		const header = {};
-		const headerNames = [
-			'ident', 'version',
-			'skinwidth', 'skinheight',
-			'framesize',
-			'num_skins', 'num_vertices', 'num_st', 'num_tris', 'num_glcmds', 'num_frames',
-			'offset_skins', 'offset_st', 'offset_tris', 'offset_frames', 'offset_glcmds', 'offset_end'
-		];
-
-		for ( let i = 0; i < headerNames.length; i ++ ) {
-
-			header[ headerNames[ i ] ] = data.getInt32( i * 4, true );
-
-		}
-
-		if ( header.ident !== 844121161 || header.version !== 8 ) {
-
-			console.error( 'Not a valid MD2 file' );
-			return;
-
-		}
-
-		if ( header.offset_end !== data.byteLength ) {
-
-			console.error( 'Corrupted MD2 file' );
-			return;
-
-		}
-
-		//
-
-		const geometry = new BufferGeometry();
-
-		// uvs
-
-		const uvsTemp = [];
-		let offset = header.offset_st;
-
-		for ( let i = 0, l = header.num_st; i < l; i ++ ) {
-
-			const u = data.getInt16( offset + 0, true );
-			const v = data.getInt16( offset + 2, true );
-
-			uvsTemp.push( u / header.skinwidth, 1 - ( v / header.skinheight ) );
-
-			offset += 4;
-
-		}
-
-		// triangles
-
-		offset = header.offset_tris;
-
-		const vertexIndices = [];
-		const uvIndices = [];
-
-		for ( let i = 0, l = header.num_tris; i < l; i ++ ) {
-
-			vertexIndices.push(
-				data.getUint16( offset + 0, true ),
-				data.getUint16( offset + 2, true ),
-				data.getUint16( offset + 4, true )
-			);
-
-			uvIndices.push(
-				data.getUint16( offset + 6, true ),
-				data.getUint16( offset + 8, true ),
-				data.getUint16( offset + 10, true )
-			);
-
-			offset += 12;
-
-		}
-
-		// frames
-
-		const translation = new Vector3();
-		const scale = new Vector3();
-
-		const frames = [];
-
-		offset = header.offset_frames;
-
-		for ( let i = 0, l = header.num_frames; i < l; i ++ ) {
-
-			scale.set(
-				data.getFloat32( offset + 0, true ),
-				data.getFloat32( offset + 4, true ),
-				data.getFloat32( offset + 8, true )
-			);
-
-			translation.set(
-				data.getFloat32( offset + 12, true ),
-				data.getFloat32( offset + 16, true ),
-				data.getFloat32( offset + 20, true )
-			);
-
-			offset += 24;
-
-			const string = [];
-
-			for ( let j = 0; j < 16; j ++ ) {
-
-				const character = data.getUint8( offset + j );
-				if ( character === 0 ) break;
-
-				string[ j ] = character;
-
-			}
-
-			const frame = {
-				name: String.fromCharCode.apply( null, string ),
-				vertices: [],
-				normals: []
-			};
-
-			offset += 16;
-
-			for ( let j = 0; j < header.num_vertices; j ++ ) {
-
-				let x = data.getUint8( offset ++ );
-				let y = data.getUint8( offset ++ );
-				let z = data.getUint8( offset ++ );
-				const n = _normalData[ data.getUint8( offset ++ ) ];
-
-				x = x * scale.x + translation.x;
-				y = y * scale.y + translation.y;
-				z = z * scale.z + translation.z;
-
-				frame.vertices.push( x, z, y ); // convert to Y-up
-				frame.normals.push( n[ 0 ], n[ 2 ], n[ 1 ] ); // convert to Y-up
-
-			}
-
-			frames.push( frame );
-
-		}
-
-		// static
-
-		const positions = [];
-		const normals = [];
-		const uvs = [];
-
-		const verticesTemp = frames[ 0 ].vertices;
-		const normalsTemp = frames[ 0 ].normals;
-
-		for ( let i = 0, l = vertexIndices.length; i < l; i ++ ) {
-
-			const vertexIndex = vertexIndices[ i ];
-			let stride = vertexIndex * 3;
-
-			//
-
-			const x = verticesTemp[ stride ];
-			const y = verticesTemp[ stride + 1 ];
-			const z = verticesTemp[ stride + 2 ];
-
-			positions.push( x, y, z );
-
-			//
-
-			const nx = normalsTemp[ stride ];
-			const ny = normalsTemp[ stride + 1 ];
-			const nz = normalsTemp[ stride + 2 ];
-
-			normals.push( nx, ny, nz );
-
-			//
-
-			const uvIndex = uvIndices[ i ];
-			stride = uvIndex * 2;
-
-			const u = uvsTemp[ stride ];
-			const v = uvsTemp[ stride + 1 ];
-
-			uvs.push( u, v );
-
-		}
-
-		geometry.setAttribute( 'position', new Float32BufferAttribute( positions, 3 ) );
-		geometry.setAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
-		geometry.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
-
-		// animation
-
-		const morphPositions = [];
-		const morphNormals = [];
-
-		for ( let i = 0, l = frames.length; i < l; i ++ ) {
-
-			const frame = frames[ i ];
-			const attributeName = frame.name;
-
-			if ( frame.vertices.length > 0 ) {
-
-				const positions = [];
-
-				for ( let j = 0, jl = vertexIndices.length; j < jl; j ++ ) {
-
-					const vertexIndex = vertexIndices[ j ];
-					const stride = vertexIndex * 3;
-
-					const x = frame.vertices[ stride ];
-					const y = frame.vertices[ stride + 1 ];
-					const z = frame.vertices[ stride + 2 ];
-
-					positions.push( x, y, z );
-
-				}
-
-				const positionAttribute = new Float32BufferAttribute( positions, 3 );
-				positionAttribute.name = attributeName;
-
-				morphPositions.push( positionAttribute );
-
-			}
-
-			if ( frame.normals.length > 0 ) {
-
-				const normals = [];
-
-				for ( let j = 0, jl = vertexIndices.length; j < jl; j ++ ) {
-
-					const vertexIndex = vertexIndices[ j ];
-					const stride = vertexIndex * 3;
-
-					const nx = frame.normals[ stride ];
-					const ny = frame.normals[ stride + 1 ];
-					const nz = frame.normals[ stride + 2 ];
-
-					normals.push( nx, ny, nz );
-
-				}
-
-				const normalAttribute = new Float32BufferAttribute( normals, 3 );
-				normalAttribute.name = attributeName;
-
-				morphNormals.push( normalAttribute );
-
-			}
-
-		}
-
-		geometry.morphAttributes.position = morphPositions;
-		geometry.morphAttributes.normal = morphNormals;
-		geometry.morphTargetsRelative = false;
-
-		geometry.animations = AnimationClip.CreateClipsFromMorphTargetSequences( frames, 10 );
-
-		return geometry;
-
-	}
+	// animate
+
+	setInterval(step, 1000 / frameRate);
+	return {
+		addMesh: addMesh,
+		setMeshPosition: setMeshPosition
+		// addCompoundMesh
+	};
 
 }
 
-class MorphBlendMesh extends Mesh {
-
-	constructor( geometry, material ) {
-
-		super( geometry, material );
-
-		this.animationsMap = {};
-		this.animationsList = [];
-
-		// prepare default animation
-		// (all frames played together in 1 second)
-
-		const numFrames = Object.keys( this.morphTargetDictionary ).length;
-
-		const name = '__default';
-
-		const startFrame = 0;
-		const endFrame = numFrames - 1;
-
-		const fps = numFrames / 1;
-
-		this.createAnimation( name, startFrame, endFrame, fps );
-		this.setAnimationWeight( name, 1 );
-
-	}
-
-	createAnimation( name, start, end, fps ) {
-
-		const animation = {
-
-			start: start,
-			end: end,
-
-			length: end - start + 1,
-
-			fps: fps,
-			duration: ( end - start ) / fps,
-
-			lastFrame: 0,
-			currentFrame: 0,
-
-			active: false,
-
-			time: 0,
-			direction: 1,
-			weight: 1,
-
-			directionBackwards: false,
-			mirroredLoop: false
-
-		};
-
-		this.animationsMap[ name ] = animation;
-		this.animationsList.push( animation );
-
-	}
-
-	autoCreateAnimations( fps ) {
-
-		const pattern = /([a-z]+)_?(\d+)/i;
-
-		let firstAnimation;
-
-		const frameRanges = {};
-
-		let i = 0;
-
-		for ( const key in this.morphTargetDictionary ) {
-
-			const chunks = key.match( pattern );
-
-			if ( chunks && chunks.length > 1 ) {
-
-				const name = chunks[ 1 ];
-
-				if ( ! frameRanges[ name ] ) frameRanges[ name ] = { start: Infinity, end: - Infinity };
-
-				const range = frameRanges[ name ];
-
-				if ( i < range.start ) range.start = i;
-				if ( i > range.end ) range.end = i;
-
-				if ( ! firstAnimation ) firstAnimation = name;
-
-			}
-
-			i ++;
-
-		}
-
-		for ( const name in frameRanges ) {
-
-			const range = frameRanges[ name ];
-			this.createAnimation( name, range.start, range.end, fps );
-
-		}
-
-		this.firstAnimation = firstAnimation;
-
-	}
-
-	setAnimationDirectionForward( name ) {
-
-		const animation = this.animationsMap[ name ];
-
-		if ( animation ) {
-
-			animation.direction = 1;
-			animation.directionBackwards = false;
-
-		}
-
-	}
-
-	setAnimationDirectionBackward( name ) {
-
-		const animation = this.animationsMap[ name ];
-
-		if ( animation ) {
-
-			animation.direction = - 1;
-			animation.directionBackwards = true;
-
-		}
-
-	}
-
-	setAnimationFPS( name, fps ) {
-
-		const animation = this.animationsMap[ name ];
-
-		if ( animation ) {
-
-			animation.fps = fps;
-			animation.duration = ( animation.end - animation.start ) / animation.fps;
-
-		}
-
-	}
-
-	setAnimationDuration( name, duration ) {
-
-		const animation = this.animationsMap[ name ];
-
-		if ( animation ) {
-
-			animation.duration = duration;
-			animation.fps = ( animation.end - animation.start ) / animation.duration;
-
-		}
-
-	}
-
-	setAnimationWeight( name, weight ) {
-
-		const animation = this.animationsMap[ name ];
-
-		if ( animation ) {
-
-			animation.weight = weight;
-
-		}
-
-	}
-
-	setAnimationTime( name, time ) {
-
-		const animation = this.animationsMap[ name ];
-
-		if ( animation ) {
-
-			animation.time = time;
-
-		}
-
-	}
-
-	getAnimationTime( name ) {
-
-		let time = 0;
-
-		const animation = this.animationsMap[ name ];
-
-		if ( animation ) {
-
-			time = animation.time;
-
-		}
-
-		return time;
-
-	}
-
-	getAnimationDuration( name ) {
-
-		let duration = - 1;
-
-		const animation = this.animationsMap[ name ];
-
-		if ( animation ) {
-
-			duration = animation.duration;
-
-		}
-
-		return duration;
-
-	}
-
-	playAnimation( name ) {
-
-		const animation = this.animationsMap[ name ];
-
-		if ( animation ) {
-
-			animation.time = 0;
-			animation.active = true;
-
-		} else {
-
-			console.warn( 'THREE.MorphBlendMesh: animation[' + name + '] undefined in .playAnimation()' );
-
-		}
-
-	}
-
-	stopAnimation( name ) {
-
-		const animation = this.animationsMap[ name ];
-
-		if ( animation ) {
-
-			animation.active = false;
-
-		}
-
-	}
-
-	update( delta ) {
-
-		for ( let i = 0, il = this.animationsList.length; i < il; i ++ ) {
-
-			const animation = this.animationsList[ i ];
-
-			if ( ! animation.active ) continue;
-
-			const frameTime = animation.duration / animation.length;
-
-			animation.time += animation.direction * delta;
-
-			if ( animation.mirroredLoop ) {
-
-				if ( animation.time > animation.duration || animation.time < 0 ) {
-
-					animation.direction *= - 1;
-
-					if ( animation.time > animation.duration ) {
-
-						animation.time = animation.duration;
-						animation.directionBackwards = true;
-
-					}
-
-					if ( animation.time < 0 ) {
-
-						animation.time = 0;
-						animation.directionBackwards = false;
-
-					}
-
-				}
-
-			} else {
-
-				animation.time = animation.time % animation.duration;
-
-				if ( animation.time < 0 ) animation.time += animation.duration;
-
-			}
-
-			const keyframe = animation.start + MathUtils.clamp( Math.floor( animation.time / frameTime ), 0, animation.length - 1 );
-			const weight = animation.weight;
-
-			if ( keyframe !== animation.currentFrame ) {
-
-				this.morphTargetInfluences[ animation.lastFrame ] = 0;
-				this.morphTargetInfluences[ animation.currentFrame ] = 1 * weight;
-
-				this.morphTargetInfluences[ keyframe ] = 0;
-
-				animation.lastFrame = animation.currentFrame;
-				animation.currentFrame = keyframe;
-
-			}
-
-			let mix = ( animation.time % frameTime ) / frameTime;
-
-			if ( animation.directionBackwards ) mix = 1 - mix;
-
-			if ( animation.currentFrame !== animation.lastFrame ) {
-
-				this.morphTargetInfluences[ animation.currentFrame ] = mix * weight;
-				this.morphTargetInfluences[ animation.lastFrame ] = ( 1 - mix ) * weight;
-
-			} else {
-
-				this.morphTargetInfluences[ animation.currentFrame ] = weight;
-
-			}
-
-		}
-
-	}
+function compose(position, quaternion, array, index) {
+
+	const x = quaternion.x(),
+		y = quaternion.y(),
+		z = quaternion.z(),
+		w = quaternion.w();
+	const x2 = x + x,
+		y2 = y + y,
+		z2 = z + z;
+	const xx = x * x2,
+		xy = x * y2,
+		xz = x * z2;
+	const yy = y * y2,
+		yz = y * z2,
+		zz = z * z2;
+	const wx = w * x2,
+		wy = w * y2,
+		wz = w * z2;
+	array[index + 0] = 1 - (yy + zz);
+	array[index + 1] = xy + wz;
+	array[index + 2] = xz - wy;
+	array[index + 3] = 0;
+	array[index + 4] = xy - wz;
+	array[index + 5] = 1 - (xx + zz);
+	array[index + 6] = yz + wx;
+	array[index + 7] = 0;
+	array[index + 8] = xz + wy;
+	array[index + 9] = yz - wx;
+	array[index + 10] = 1 - (xx + yy);
+	array[index + 11] = 0;
+	array[index + 12] = position.x();
+	array[index + 13] = position.y();
+	array[index + 14] = position.z();
+	array[index + 15] = 1;
 
 }
 
-class MD2CharacterComplex {
-
-	constructor() {
-
-		this.scale = 1;
-
-		// animation parameters
-
-		this.animationFPS = 6;
-		this.transitionFrames = 15;
-
-		// movement model parameters
-
-		this.maxSpeed = 275;
-		this.maxReverseSpeed = - 275;
-
-		this.frontAcceleration = 600;
-		this.backAcceleration = 600;
-
-		this.frontDecceleration = 600;
-
-		this.angularSpeed = 2.5;
-
-		// rig
-
-		this.root = new Object3D();
-
-		this.meshBody = null;
-		this.meshWeapon = null;
-
-		this.controls = null;
-
-		// skins
-
-		this.skinsBody = [];
-		this.skinsWeapon = [];
-
-		this.weapons = [];
-
-		this.currentSkin = undefined;
-
-		//
-
-		this.onLoadComplete = function () {};
-
-		// internals
-
-		this.meshes = [];
-		this.animations = {};
-
-		this.loadCounter = 0;
-
-		// internal movement control variables
-
-		this.speed = 0;
-		this.bodyOrientation = 0;
-
-		this.walkSpeed = this.maxSpeed;
-		this.crouchSpeed = this.maxSpeed * 0.5;
-
-		// internal animation parameters
-
-		this.activeAnimation = null;
-		this.oldAnimation = null;
-
-		// API
-
-	}
-
-	enableShadows( enable ) {
-
-		for ( let i = 0; i < this.meshes.length; i ++ ) {
-
-			this.meshes[ i ].castShadow = enable;
-			this.meshes[ i ].receiveShadow = enable;
-
-		}
-
-	}
-
-	setVisible( enable ) {
-
-		for ( let i = 0; i < this.meshes.length; i ++ ) {
-
-			this.meshes[ i ].visible = enable;
-			this.meshes[ i ].visible = enable;
-
-		}
-
-	}
-
-	shareParts( original ) {
-
-		this.animations = original.animations;
-		this.walkSpeed = original.walkSpeed;
-		this.crouchSpeed = original.crouchSpeed;
-
-		this.skinsBody = original.skinsBody;
-		this.skinsWeapon = original.skinsWeapon;
-
-		// BODY
-
-		const mesh = this._createPart( original.meshBody.geometry, this.skinsBody[ 0 ] );
-		mesh.scale.set( this.scale, this.scale, this.scale );
-
-		this.root.position.y = original.root.position.y;
-		this.root.add( mesh );
-
-		this.meshBody = mesh;
-
-		this.meshes.push( mesh );
-
-		// WEAPONS
-
-		for ( let i = 0; i < original.weapons.length; i ++ ) {
-
-			const meshWeapon = this._createPart( original.weapons[ i ].geometry, this.skinsWeapon[ i ] );
-			meshWeapon.scale.set( this.scale, this.scale, this.scale );
-			meshWeapon.visible = false;
-
-			meshWeapon.name = original.weapons[ i ].name;
-
-			this.root.add( meshWeapon );
-
-			this.weapons[ i ] = meshWeapon;
-			this.meshWeapon = meshWeapon;
-
-			this.meshes.push( meshWeapon );
-
-		}
-
-	}
-
-	loadParts( config ) {
-
-		const scope = this;
-
-		function loadTextures( baseUrl, textureUrls ) {
-
-			const textureLoader = new TextureLoader();
-			const textures = [];
-
-			for ( let i = 0; i < textureUrls.length; i ++ ) {
-
-				textures[ i ] = textureLoader.load( baseUrl + textureUrls[ i ], checkLoadingComplete );
-				textures[ i ].mapping = UVMapping;
-				textures[ i ].name = textureUrls[ i ];
-				textures[ i ].encoding = sRGBEncoding;
-
-			}
-
-			return textures;
-
-		}
-
-		function checkLoadingComplete() {
-
-			scope.loadCounter -= 1;
-			if ( scope.loadCounter === 0 ) 	scope.onLoadComplete();
-
-		}
-
-		this.animations = config.animations;
-		this.walkSpeed = config.walkSpeed;
-		this.crouchSpeed = config.crouchSpeed;
-
-		this.loadCounter = config.weapons.length * 2 + config.skins.length + 1;
-
-		const weaponsTextures = [];
-		for ( let i = 0; i < config.weapons.length; i ++ ) weaponsTextures[ i ] = config.weapons[ i ][ 1 ];
-
-		// SKINS
-
-		this.skinsBody = loadTextures( config.baseUrl + 'skins/', config.skins );
-		this.skinsWeapon = loadTextures( config.baseUrl + 'skins/', weaponsTextures );
-
-		// BODY
-
-		const loader = new MD2Loader();
-
-		loader.load( config.baseUrl + config.body, function ( geo ) {
-
-			const boundingBox = new Box3();
-			boundingBox.setFromBufferAttribute( geo.attributes.position );
-
-			scope.root.position.y = - scope.scale * boundingBox.min.y;
-
-			const mesh = scope._createPart( geo, scope.skinsBody[ 0 ] );
-			mesh.scale.set( scope.scale, scope.scale, scope.scale );
-
-			scope.root.add( mesh );
-
-			scope.meshBody = mesh;
-			scope.meshes.push( mesh );
-
-			checkLoadingComplete();
-
-		} );
-
-		// WEAPONS
-
-		const generateCallback = function ( index, name ) {
-
-			return function ( geo ) {
-
-				const mesh = scope._createPart( geo, scope.skinsWeapon[ index ] );
-				mesh.scale.set( scope.scale, scope.scale, scope.scale );
-				mesh.visible = false;
-
-				mesh.name = name;
-
-				scope.root.add( mesh );
-
-				scope.weapons[ index ] = mesh;
-				scope.meshWeapon = mesh;
-				scope.meshes.push( mesh );
-
-				checkLoadingComplete();
-
-			};
-
-		};
-
-		for ( let i = 0; i < config.weapons.length; i ++ ) {
-
-			loader.load( config.baseUrl + config.weapons[ i ][ 0 ], generateCallback( i, config.weapons[ i ][ 0 ] ) );
-
-		}
-
-	}
-
-	setPlaybackRate( rate ) {
-
-		if ( this.meshBody ) this.meshBody.duration = this.meshBody.baseDuration / rate;
-		if ( this.meshWeapon ) this.meshWeapon.duration = this.meshWeapon.baseDuration / rate;
-
-	}
-
-	setWireframe( wireframeEnabled ) {
-
-		if ( wireframeEnabled ) {
-
-			if ( this.meshBody ) this.meshBody.material = this.meshBody.materialWireframe;
-			if ( this.meshWeapon ) this.meshWeapon.material = this.meshWeapon.materialWireframe;
-
-		} else {
-
-			if ( this.meshBody ) this.meshBody.material = this.meshBody.materialTexture;
-			if ( this.meshWeapon ) this.meshWeapon.material = this.meshWeapon.materialTexture;
-
-		}
-
-	}
-
-	setSkin( index ) {
-
-		if ( this.meshBody && this.meshBody.material.wireframe === false ) {
-
-			this.meshBody.material.map = this.skinsBody[ index ];
-			this.currentSkin = index;
-
-		}
-
-	}
-
-	setWeapon( index ) {
-
-		for ( let i = 0; i < this.weapons.length; i ++ ) this.weapons[ i ].visible = false;
-
-		const activeWeapon = this.weapons[ index ];
-
-		if ( activeWeapon ) {
-
-			activeWeapon.visible = true;
-			this.meshWeapon = activeWeapon;
-
-			if ( this.activeAnimation ) {
-
-				activeWeapon.playAnimation( this.activeAnimation );
-				this.meshWeapon.setAnimationTime( this.activeAnimation, this.meshBody.getAnimationTime( this.activeAnimation ) );
-
-			}
-
-		}
-
-	}
-
-	setAnimation( animationName ) {
-
-		if ( animationName === this.activeAnimation || ! animationName ) return;
-
-		if ( this.meshBody ) {
-
-			this.meshBody.setAnimationWeight( animationName, 0 );
-			this.meshBody.playAnimation( animationName );
-
-			this.oldAnimation = this.activeAnimation;
-			this.activeAnimation = animationName;
-
-			this.blendCounter = this.transitionFrames;
-
-		}
-
-		if ( this.meshWeapon ) {
-
-			this.meshWeapon.setAnimationWeight( animationName, 0 );
-			this.meshWeapon.playAnimation( animationName );
-
-		}
-
-
-	}
-
-	update( delta ) {
-
-		if ( this.controls ) this.updateMovementModel( delta );
-
-		if ( this.animations ) {
-
-			this.updateBehaviors();
-			this.updateAnimations( delta );
-
-		}
-
-	}
-
-	updateAnimations( delta ) {
-
-		let mix = 1;
-
-		if ( this.blendCounter > 0 ) {
-
-			mix = ( this.transitionFrames - this.blendCounter ) / this.transitionFrames;
-			this.blendCounter -= 1;
-
-		}
-
-		if ( this.meshBody ) {
-
-			this.meshBody.update( delta );
-
-			this.meshBody.setAnimationWeight( this.activeAnimation, mix );
-			this.meshBody.setAnimationWeight( this.oldAnimation, 1 - mix );
-
-		}
-
-		if ( this.meshWeapon ) {
-
-			this.meshWeapon.update( delta );
-
-			this.meshWeapon.setAnimationWeight( this.activeAnimation, mix );
-			this.meshWeapon.setAnimationWeight( this.oldAnimation, 1 - mix );
-
-		}
-
-	}
-
-	updateBehaviors() {
-
-		const controls = this.controls;
-		const animations = this.animations;
-
-		let moveAnimation, idleAnimation;
-
-		// crouch vs stand
-
-		if ( controls.crouch ) {
-
-			moveAnimation = animations[ 'crouchMove' ];
-			idleAnimation = animations[ 'crouchIdle' ];
-
-		} else {
-
-			moveAnimation = animations[ 'move' ];
-			idleAnimation = animations[ 'idle' ];
-
-		}
-
-		// actions
-
-		if ( controls.jump ) {
-
-			moveAnimation = animations[ 'jump' ];
-			idleAnimation = animations[ 'jump' ];
-
-		}
-
-		if ( controls.attack ) {
-
-			if ( controls.crouch ) {
-
-				moveAnimation = animations[ 'crouchAttack' ];
-				idleAnimation = animations[ 'crouchAttack' ];
-
-			} else {
-
-				moveAnimation = animations[ 'attack' ];
-				idleAnimation = animations[ 'attack' ];
-
-			}
-
-		}
-
-		// set animations
-
-		if ( controls.moveForward || controls.moveBackward || controls.moveLeft || controls.moveRight ) {
-
-			if ( this.activeAnimation !== moveAnimation ) {
-
-				this.setAnimation( moveAnimation );
-
-			}
-
-		}
-
-
-		if ( Math.abs( this.speed ) < 0.2 * this.maxSpeed && ! ( controls.moveLeft || controls.moveRight || controls.moveForward || controls.moveBackward ) ) {
-
-			if ( this.activeAnimation !== idleAnimation ) {
-
-				this.setAnimation( idleAnimation );
-
-			}
-
-		}
-
-		// set animation direction
-
-		if ( controls.moveForward ) {
-
-			if ( this.meshBody ) {
-
-				this.meshBody.setAnimationDirectionForward( this.activeAnimation );
-				this.meshBody.setAnimationDirectionForward( this.oldAnimation );
-
-			}
-
-			if ( this.meshWeapon ) {
-
-				this.meshWeapon.setAnimationDirectionForward( this.activeAnimation );
-				this.meshWeapon.setAnimationDirectionForward( this.oldAnimation );
-
-			}
-
-		}
-
-		if ( controls.moveBackward ) {
-
-			if ( this.meshBody ) {
-
-				this.meshBody.setAnimationDirectionBackward( this.activeAnimation );
-				this.meshBody.setAnimationDirectionBackward( this.oldAnimation );
-
-			}
-
-			if ( this.meshWeapon ) {
-
-				this.meshWeapon.setAnimationDirectionBackward( this.activeAnimation );
-				this.meshWeapon.setAnimationDirectionBackward( this.oldAnimation );
-
-			}
-
-		}
-
-	}
-
-	updateMovementModel( delta ) {
-
-		function exponentialEaseOut( k ) {
-
-			return k === 1 ? 1 : - Math.pow( 2, - 10 * k ) + 1;
-
-		}
-
-		const controls = this.controls;
-
-		// speed based on controls
-
-		if ( controls.crouch ) 	this.maxSpeed = this.crouchSpeed;
-		else this.maxSpeed = this.walkSpeed;
-
-		this.maxReverseSpeed = - this.maxSpeed;
-
-		if ( controls.moveForward ) this.speed = MathUtils.clamp( this.speed + delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
-		if ( controls.moveBackward ) this.speed = MathUtils.clamp( this.speed - delta * this.backAcceleration, this.maxReverseSpeed, this.maxSpeed );
-
-		// orientation based on controls
-		// (don't just stand while turning)
-
-		const dir = 1;
-
-		if ( controls.moveLeft ) {
-
-			this.bodyOrientation += delta * this.angularSpeed;
-			this.speed = MathUtils.clamp( this.speed + dir * delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
-
-		}
-
-		if ( controls.moveRight ) {
-
-			this.bodyOrientation -= delta * this.angularSpeed;
-			this.speed = MathUtils.clamp( this.speed + dir * delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
-
-		}
-
-		// speed decay
-
-		if ( ! ( controls.moveForward || controls.moveBackward ) ) {
-
-			if ( this.speed > 0 ) {
-
-				const k = exponentialEaseOut( this.speed / this.maxSpeed );
-				this.speed = MathUtils.clamp( this.speed - k * delta * this.frontDecceleration, 0, this.maxSpeed );
-
-			} else {
-
-				const k = exponentialEaseOut( this.speed / this.maxReverseSpeed );
-				this.speed = MathUtils.clamp( this.speed + k * delta * this.backAcceleration, this.maxReverseSpeed, 0 );
-
-			}
-
-		}
-
-		// displacement
-
-		const forwardDelta = this.speed * delta;
-
-		this.root.position.x += Math.sin( this.bodyOrientation ) * forwardDelta;
-		this.root.position.z += Math.cos( this.bodyOrientation ) * forwardDelta;
-
-		// steering
-
-		this.root.rotation.y = this.bodyOrientation;
-
-	}
-
-	// internal
-
-	_createPart( geometry, skinMap ) {
-
-		const materialWireframe = new MeshLambertMaterial( { color: 0xffaa00, wireframe: true } );
-		const materialTexture = new MeshLambertMaterial( { color: 0xffffff, wireframe: false, map: skinMap } );
-
-		//
-
-		const mesh = new MorphBlendMesh( geometry, materialTexture );
-		mesh.rotation.y = - Math.PI / 2;
-
-		//
-
-		mesh.materialTexture = materialTexture;
-		mesh.materialWireframe = materialWireframe;
-
-		//
-
-		mesh.autoCreateAnimations( this.animationFPS );
-
-		return mesh;
-
-	}
-
-}
-
-const _translationObject = new Vector3();
-const _quaternionObject = new Quaternion();
-const _scaleObject = new Vector3();
-
-const _translationWorld = new Vector3();
-const _quaternionWorld = new Quaternion();
-const _scaleWorld = new Vector3();
-
-class Gyroscope extends Object3D {
-
-	constructor() {
-
-		super();
-
-	}
-
-	updateMatrixWorld( force ) {
-
-		this.matrixAutoUpdate && this.updateMatrix();
-
-		// update matrixWorld
-
-		if ( this.matrixWorldNeedsUpdate || force ) {
-
-			if ( this.parent !== null ) {
-
-				this.matrixWorld.multiplyMatrices( this.parent.matrixWorld, this.matrix );
-
-				this.matrixWorld.decompose( _translationWorld, _quaternionWorld, _scaleWorld );
-				this.matrix.decompose( _translationObject, _quaternionObject, _scaleObject );
-
-				this.matrixWorld.compose( _translationWorld, _quaternionObject, _scaleWorld );
-
-
-			} else {
-
-				this.matrixWorld.copy( this.matrix );
-
-			}
-
-
-			this.matrixWorldNeedsUpdate = false;
-
-			force = true;
-
-		}
-
-		// update children
-
-		for ( let i = 0, l = this.children.length; i < l; i ++ ) {
-
-			this.children[ i ].updateMatrixWorld( force );
-
-		}
-
-	}
-
-}
+let physics;
 
 const scene = new Scene();
 
@@ -34565,7 +31299,8 @@ const material = new MeshBasicMaterial({
     color: 'orange'
 });
 const cubeMesh = new Mesh(geometry, material);
-//scene.add(cubeMesh);
+cubeMesh.position.set(0, 20, 0);
+scene.add(cubeMesh);
 
 const sizes = {
     width: window.innerWidth,
@@ -34573,7 +31308,7 @@ const sizes = {
 };
 
 const camera = new PerspectiveCamera(75, sizes.width / sizes.height);
-camera.position.set( 0, 40, -40 );
+camera.position.set( 0, 10, -10 );
 camera.lookAt(0,0,0);
 scene.add(camera);
 
@@ -34596,169 +31331,37 @@ new Color();
 
 
 //
-const clock = new Clock();
-
-// Models
-const characters = [];
-let nCharacters = 0;
-
-const modelControls = {
-
-    moveForward: false,
-    moveBackward: false,
-    moveLeft: false,
-    moveRight: false
-
-};
+new Clock();
 
 init();
 
-function init() {
+async function init() {
+    physics = await AmmoPhysics();
+
     window.addEventListener('resize', windowResize);
 
-    new Terrain(scene);
+    const terrain = new Terrain(scene);
+    physics.addMesh(terrain.ground);
 
-    //controls = new OrbitControls(camera, renderer.domElement);
-    new PointerLockControls(camera, document.body);
+    physics.addMesh(cubeMesh, 1);
+
+    new OrbitControls(camera, renderer.domElement);
 
     new Raycaster(new Vector3(), new Vector3(0, -1, 0), 0, 10);
 
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('keyup', onKeyUp);
-
-    //scene.add(controls.getObject());
-
-
-
-    addModel();
 }
 
-function addModel(){
-    const configOgro = {
-        baseUrl: 'resources/md2/ogro/',
-
-        body: 'ogro.md2',
-        skins: [ 'sharokh.png' ],
-        weapons: [[ 'weapon.md2', 'weapon.jpg' ]],
-        animations: {
-            move: 'run',
-            idle: 'stand',
-            jump: 'jump',
-            attack: 'attack',
-            crouchMove: 'cwalk',
-            crouchIdle: 'cstand',
-            crouchAttach: 'crattack'
-        },
-
-        walkSpeed: 550,
-        crouchSpeed: 175
-    };
-
-
-    const nRows = 1;
-    const nSkins = configOgro.skins.length;
-
-    nCharacters = nSkins * nRows;
-
-    for ( let i = 0; i < nCharacters; i ++ ) {
-        const character = new MD2CharacterComplex();
-        character.scale = 1;
-        character.controls = modelControls;
-        characters.push( character );
-    }
-
-    const baseCharacter = new MD2CharacterComplex();
-    baseCharacter.scale = 1;
-
-    baseCharacter.onLoadComplete = function () {
-
-        let k = 0;
-
-        for ( let j = 0; j < nRows; j ++ ) {
-
-            for ( let i = 0; i < nSkins; i ++ ) {
-
-                const cloneCharacter = characters[ k ];
-
-                cloneCharacter.shareParts( baseCharacter );
-
-                // cast and receive shadows
-                cloneCharacter.enableShadows( true );
-
-                cloneCharacter.setWeapon( 0 );
-                cloneCharacter.setSkin( i );
-
-                cloneCharacter.root.position.x = ( i - nSkins / 2 ) * 150;
-                cloneCharacter.root.position.z = j * 250;
-
-                scene.add( cloneCharacter.root );
-
-                k ++;
-
-            }
-
-        }
-
-        const gyro = new Gyroscope();
-        gyro.add( camera );
-        characters[ Math.floor( nSkins / 2 ) ].root.add( gyro );
-
-    };
-
-    baseCharacter.loadParts( configOgro );
-}
 
 function animate() {
     cubeMesh.rotation.x += 0.01;
 
+    // if(enableDrop){
+    //     cubeMesh.position.y += 0.01;
+    // }
+
     requestAnimationFrame(animate);
-
-    // const time = performance.now();
-
-    // raycaster.ray.origin.copy( controls.getObject().position );
-    // raycaster.ray.origin.y -= 10;
-    // const intersections = raycaster.intersectObjects( objects, false );
-    // const onObject = intersections.length > 0;
-
-    // const delta = ( time - prevTime ) / 1000;
-    // velocity.x -= velocity.x * 10.0 * delta;
-    // velocity.z -= velocity.z * 10.0 * delta;
-    // velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
-
-    // direction.z = Number( moveForward ) - Number( moveBackward );
-	// direction.x = Number( moveRight ) - Number( moveLeft );
-	// direction.normalize(); // this ensures consistent movements in all directions
-
-    // if ( moveForward || moveBackward ) velocity.z -= direction.z * 400.0 * delta;
-    // if ( moveLeft || moveRight ) velocity.x -= direction.x * 400.0 * delta;
-
-    // if ( onObject === true ) {
-    //     velocity.y = Math.max( 0, velocity.y );
-    //     canJump = true;
-    // }
-
-    // controls.moveRight( - velocity.x * delta );
-    // controls.moveForward( - velocity.z * delta );
-
-    // controls.getObject().position.y += ( velocity.y * delta ); // new behavior
-
-    // if ( controls.getObject().position.y < 10 ) {
-    //     velocity.y = 0;
-    //     controls.getObject().position.y = 10;
-    //     canJump = true;
-    // }
-
-    // prevTime = time;
-
-
-    const cDelta = clock.getDelta();
-    for ( let i = 0; i < nCharacters; i ++ ) {
-
-        characters[ i ].update( cDelta );
-
-    }
-
-
     renderer.render(scene, camera);
 }
 
@@ -34773,26 +31376,21 @@ function onKeyDown(event) {
     switch (event.code) {
         case 'ArrowUp':
         case 'KeyW':
-            modelControls.moveForward = true;
             break;
 
         case 'ArrowLeft':
         case 'KeyA':
-            modelControls.moveLeft = true;
             break;
 
         case 'ArrowDown':
         case 'KeyS':
-            modelControls.moveBackward = true;
             break;
 
         case 'ArrowRight':
         case 'KeyD':
-            modelControls.moveRight = true;
             break;
 
         case 'KeyP':
-            //controls.lock();
             break;
 
         case 'Space':
@@ -34804,26 +31402,7 @@ function onKeyDown(event) {
 
 function onKeyUp(event){
     switch ( event.code ) {
-        case 'ArrowUp':
-        case 'KeyW':
-            modelControls.moveForward = false;
-            break;
-
-        case 'ArrowLeft':
-        case 'KeyA':
-            modelControls.moveLeft = false;
-            break;
-
-        case 'ArrowDown':
-        case 'KeyS':
-            modelControls.moveBackward = false;
-            break;
-
-        case 'ArrowRight':
-        case 'KeyD':
-            modelControls.moveRight = false;
-            break;
-    }
+            }
 }
 
 animate();
