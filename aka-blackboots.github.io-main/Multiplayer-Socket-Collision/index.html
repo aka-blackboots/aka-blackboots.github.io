@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game by Vishwajeet</title>
+    <link type="text/css" rel="stylesheet" href="./static/style.css">
+</head>
+<body>
+    <canvas id="game-canvas"></canvas>
+
+    <div id="socket-connection-form">
+        <label for="initials-name">Enter Your Initials</label><br>
+        <input maxlength="2" type="text" id="initials-name" name="initials-name"><br>
+        <button id="socket-Connect-Button" onclick="connectToSocket()">Connect</button>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script src="static/physics/ammo.wasm.js"></script>
+    <script src="static/bundle.js"></script>
+</body>
+</html>
