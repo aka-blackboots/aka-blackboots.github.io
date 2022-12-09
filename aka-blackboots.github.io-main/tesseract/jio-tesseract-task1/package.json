@@ -1,0 +1,20 @@
+{
+  "name": "tesseract-t1",
+  "version": "1.0.0",
+  "description": "WebApp to Show 360 Videos using NexPlayer SDK",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c ./rollup.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vishwajeet Mane",
+  "license": "ISC",
+  "dependencies": {
+    "three": "^0.147.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "rollup": "^3.7.0"
+  }
+}

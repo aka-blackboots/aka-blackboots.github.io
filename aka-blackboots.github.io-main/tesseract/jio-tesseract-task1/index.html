@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>3D 360 WebApp by Vishwajeet</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+
+        <script type="text/javascript" src="/src/bundle.js"></script>        
+        <script src="/src/nexplayer.js"></script>
+        <script type="text/javascript">
+            nexplayer.Setup({
+                key: "tq95s293olcxci9yw59qdjnc",
+                div: document.getElementById('player'),
+                type_360: true,   
+                autoplay: true,             
+                src: "https://firebasestorage.googleapis.com/v0/b/tesseract-t1.appspot.com/o/Around%20the%20World.%20The%20Best.%208K%20360%20video.webm?alt=media&token=93dc563d-cb0c-4d26-a537-6cdd05715bbf",
+                watermark: {
+                    url: 'https://www.devdensolutions.com/wp-content/uploads/2021/12/Jio-Tesseract.png', // Optional
+                    position: { top: '20px', left: '20px'},
+                    size: { height:'80x', width: '80px'}
+                },
+            });
+        </script>
+    </body>
+</html>
