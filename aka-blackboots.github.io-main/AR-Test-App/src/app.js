@@ -38,6 +38,8 @@ import EvercoastPlayerApi from 'evercoast-player-api';
 import { EvercoastPlayerApiConfig } from 'evercoast-player-api'
 import EvercoastThreeJSRenderSystem from 'evercoast-renderers/lib/evercoast-threejs-rendersystem'
 
+const playBtn = document.getElementById("playBtn");
+
 let camera, scene, renderer;
 let controller;
 let box, planeMarker, humanEverCoastModel;
@@ -45,6 +47,7 @@ let playerApi;
 
 init();
 animate();
+
 
 function init() {
   const container = document.createElement('div');
@@ -135,7 +138,8 @@ function createPlayerApi(scene){
 
   const playerApiConfig = new EvercoastPlayerApiConfig();
   console.log(playerApiConfig)
-  const root = location.origin + '/';
+  //const root = location.origin + '/';
+  const root = "https://joyful-basbousa-d571da.netlify.app/aka-blackboots.github.io-main/ar-test-app/"
 
   playerApiConfig.root = root;
   const renderSystem = new EvercoastThreeJSRenderSystem(renderer);
