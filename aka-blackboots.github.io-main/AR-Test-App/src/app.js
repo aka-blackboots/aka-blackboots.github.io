@@ -110,7 +110,7 @@ function initBaseScene() {
 
   //controller.addEventListener("select", showModel);
 
-  addModel();
+  //addModel();
   playerApi = createPlayerApi(scene);
 }
 
@@ -214,11 +214,11 @@ function render(timestamp, frame) {
 
     box.rotation.x += 0.04;
 
-    updatePlayer();
+    
   }
   renderer.render(scene, camera);
 
-
+  updatePlayer();
 }
 
 function updatePlayer(){
