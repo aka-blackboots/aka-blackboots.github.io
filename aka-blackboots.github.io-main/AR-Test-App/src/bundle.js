@@ -28742,200 +28742,6 @@ class Scene extends Object3D {
 
 }
 
-class RingGeometry extends BufferGeometry {
-
-	constructor( innerRadius = 0.5, outerRadius = 1, thetaSegments = 8, phiSegments = 1, thetaStart = 0, thetaLength = Math.PI * 2 ) {
-
-		super();
-
-		this.type = 'RingGeometry';
-
-		this.parameters = {
-			innerRadius: innerRadius,
-			outerRadius: outerRadius,
-			thetaSegments: thetaSegments,
-			phiSegments: phiSegments,
-			thetaStart: thetaStart,
-			thetaLength: thetaLength
-		};
-
-		thetaSegments = Math.max( 3, thetaSegments );
-		phiSegments = Math.max( 1, phiSegments );
-
-		// buffers
-
-		const indices = [];
-		const vertices = [];
-		const normals = [];
-		const uvs = [];
-
-		// some helper variables
-
-		let radius = innerRadius;
-		const radiusStep = ( ( outerRadius - innerRadius ) / phiSegments );
-		const vertex = new Vector3();
-		const uv = new Vector2();
-
-		// generate vertices, normals and uvs
-
-		for ( let j = 0; j <= phiSegments; j ++ ) {
-
-			for ( let i = 0; i <= thetaSegments; i ++ ) {
-
-				// values are generate from the inside of the ring to the outside
-
-				const segment = thetaStart + i / thetaSegments * thetaLength;
-
-				// vertex
-
-				vertex.x = radius * Math.cos( segment );
-				vertex.y = radius * Math.sin( segment );
-
-				vertices.push( vertex.x, vertex.y, vertex.z );
-
-				// normal
-
-				normals.push( 0, 0, 1 );
-
-				// uv
-
-				uv.x = ( vertex.x / outerRadius + 1 ) / 2;
-				uv.y = ( vertex.y / outerRadius + 1 ) / 2;
-
-				uvs.push( uv.x, uv.y );
-
-			}
-
-			// increase the radius for next row of vertices
-
-			radius += radiusStep;
-
-		}
-
-		// indices
-
-		for ( let j = 0; j < phiSegments; j ++ ) {
-
-			const thetaSegmentLevel = j * ( thetaSegments + 1 );
-
-			for ( let i = 0; i < thetaSegments; i ++ ) {
-
-				const segment = i + thetaSegmentLevel;
-
-				const a = segment;
-				const b = segment + thetaSegments + 1;
-				const c = segment + thetaSegments + 2;
-				const d = segment + 1;
-
-				// faces
-
-				indices.push( a, b, d );
-				indices.push( b, c, d );
-
-			}
-
-		}
-
-		// build geometry
-
-		this.setIndex( indices );
-		this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-		this.setAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
-		this.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
-
-	}
-
-	static fromJSON( data ) {
-
-		return new RingGeometry( data.innerRadius, data.outerRadius, data.thetaSegments, data.phiSegments, data.thetaStart, data.thetaLength );
-
-	}
-
-}
-
-class Light extends Object3D {
-
-	constructor( color, intensity = 1 ) {
-
-		super();
-
-		this.isLight = true;
-
-		this.type = 'Light';
-
-		this.color = new Color( color );
-		this.intensity = intensity;
-
-	}
-
-	dispose() {
-
-		// Empty here in base class; some subclasses override.
-
-	}
-
-	copy( source, recursive ) {
-
-		super.copy( source, recursive );
-
-		this.color.copy( source.color );
-		this.intensity = source.intensity;
-
-		return this;
-
-	}
-
-	toJSON( meta ) {
-
-		const data = super.toJSON( meta );
-
-		data.object.color = this.color.getHex();
-		data.object.intensity = this.intensity;
-
-		if ( this.groundColor !== undefined ) data.object.groundColor = this.groundColor.getHex();
-
-		if ( this.distance !== undefined ) data.object.distance = this.distance;
-		if ( this.angle !== undefined ) data.object.angle = this.angle;
-		if ( this.decay !== undefined ) data.object.decay = this.decay;
-		if ( this.penumbra !== undefined ) data.object.penumbra = this.penumbra;
-
-		if ( this.shadow !== undefined ) data.object.shadow = this.shadow.toJSON();
-
-		return data;
-
-	}
-
-}
-
-class HemisphereLight extends Light {
-
-	constructor( skyColor, groundColor, intensity ) {
-
-		super( skyColor, intensity );
-
-		this.isHemisphereLight = true;
-
-		this.type = 'HemisphereLight';
-
-		this.position.copy( Object3D.DefaultUp );
-		this.updateMatrix();
-
-		this.groundColor = new Color( groundColor );
-
-	}
-
-	copy( source, recursive ) {
-
-		super.copy( source, recursive );
-
-		this.groundColor.copy( source.groundColor );
-
-		return this;
-
-	}
-
-}
-
 if ( typeof __THREE_DEVTOOLS__ !== 'undefined' ) {
 
 	__THREE_DEVTOOLS__.dispatchEvent( new CustomEvent( 'register', { detail: {
@@ -29166,99 +28972,59 @@ class ARButton {
 }
 
 let camera, scene, renderer;
-let box, planeMarker;
+let box;
 
 init();
 animate();
 
-function init() {
-  const container = document.createElement('div');
-  document.body.appendChild(container);
+function init(){
+  const container = document.createElement( 'div' );
+	document.body.appendChild( container );
 
   scene = new Scene();
-  camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+  camera = new PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 20 );
 
-  renderer = new WebGLRenderer({
-    antialias: true,
-    alpha: true
-  });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.xr.enabled = true;
-  container.appendChild(renderer.domElement);
+  renderer = new WebGLRenderer( { antialias: true, alpha: true } );
+	renderer.setPixelRatio( window.devicePixelRatio );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.xr.enabled = true;
+	container.appendChild( renderer.domElement );
 
-  document.body.appendChild(ARButton.createButton(renderer, {
-    requiredFeatures: ["hit-test"]
-  }, ));
+  document.body.appendChild(ARButton.createButton( renderer,
+    {requiredFeatures: ["hit-test"]},
+  ));
 
   // Add Assets
   const boxGeometry = new BoxGeometry(1, 1, 1);
-  const boxMaterial = new MeshBasicMaterial({
-    color: 0xff0000
-  });
+  const boxMaterial = new MeshBasicMaterial({ color: 0xff0000 });
   box = new Mesh(boxGeometry, boxMaterial);
   box.position.z = -3;
   scene.add(box);
   // End of Assets
-
-  initBaseScene();
 
   // Pass the renderer to the createScene-funtion.
   //createScene(renderer);
   // Display a welcome message to the user.
   //displayIntroductionMessage();
 
-  window.addEventListener('resize', onWindowResize);
-}
-
-function initBaseScene() {
-  const light = new HemisphereLight(0xffffff, 0xbbbbff, 1);
-  light.position.set(0.5, 1, 0.25);
-  scene.add(light);
-
-
-  planeMarker = createPlaneMarker();
-  scene.add(planeMarker);
+  window.addEventListener( 'resize', onWindowResize );
 }
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
 function animate() {
-  renderer.setAnimationLoop(render);
+  renderer.setAnimationLoop( render );
 }
-
 function render(timestamp, frame) {
-  if (renderer.xr.isPresenting) {
-    if (frame) {
-      handleXRHitTest(renderer, frame, (hitPoseTransformed) => {
-        if (hitPoseTransformed) {
-          planeMarker.visible = true;
-          planeMarker.matrix.fromArray(hitPoseTransformed);
-        }
-      }, () => {
-        planeMarker.visible = false;
-      });
-    }
-
-    renderer.render(scene, camera);
-  }
-}
-
-
-
-
-/* Shift To Different File, Vish - Make it little nice with interactive UI */
-function createPlaneMarker() {
-  const planeMarkerMaterial = new MeshBasicMaterial({ color: 0xffffff });
   
-  const planeMarkerGeometry = new RingGeometry(0.14, 0.15, 16).rotateX(
-    -Math.PI / 2,
-  );
-  const planeMarker = new Mesh(planeMarkerGeometry, planeMarkerMaterial);
-  planeMarker.matrixAutoUpdate = false;
-  return planeMarker;
+  if (frame) {
+    box.rotation.y += 0.01;
+    box.rotation.x += 0.01;
+  }
+  
+  renderer.render( scene, camera );
 }
