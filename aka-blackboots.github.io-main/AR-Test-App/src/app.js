@@ -102,7 +102,7 @@ function animate() {
 }
 
 function render(timestamp, frame) {
-  if (renderer.xr.isPresenting) {
+  //if (renderer.xr.isPresenting) {
     if (frame) {
       handleXRHitTest(renderer, frame, (hitPoseTransformed) => {
         if (hitPoseTransformed) {
@@ -115,7 +115,7 @@ function render(timestamp, frame) {
     }
 
     renderer.render(scene, camera);
-  }
+  //}
 }
 
 
