@@ -39875,7 +39875,7 @@ function addModel() {
   dracoLoader.setDecoderPath('/examples/js/libs/draco/');
   gltfLoader.setDRACOLoader(dracoLoader);
 
-  gltfLoader.load("./../models/koala.glb", (gltf) => {
+  gltfLoader.load("../models/koala.glb", (gltf) => {
     humanEverCoastModel = gltf.scene.children[0];
     console.log(humanEverCoastModel);
     scene.add(humanEverCoastModel);
