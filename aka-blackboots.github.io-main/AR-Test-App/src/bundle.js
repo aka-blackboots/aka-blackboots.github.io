@@ -28796,205 +28796,30 @@ class Light extends Object3D {
 
 }
 
-const _projScreenMatrix$1 = /*@__PURE__*/ new Matrix4();
-const _lightPositionWorld$1 = /*@__PURE__*/ new Vector3();
-const _lookTarget$1 = /*@__PURE__*/ new Vector3();
+class HemisphereLight extends Light {
 
-class LightShadow {
+	constructor( skyColor, groundColor, intensity ) {
 
-	constructor( camera ) {
+		super( skyColor, intensity );
 
-		this.camera = camera;
+		this.isHemisphereLight = true;
 
-		this.bias = 0;
-		this.normalBias = 0;
-		this.radius = 1;
-		this.blurSamples = 8;
-
-		this.mapSize = new Vector2( 512, 512 );
-
-		this.map = null;
-		this.mapPass = null;
-		this.matrix = new Matrix4();
-
-		this.autoUpdate = true;
-		this.needsUpdate = false;
-
-		this._frustum = new Frustum();
-		this._frameExtents = new Vector2( 1, 1 );
-
-		this._viewportCount = 1;
-
-		this._viewports = [
-
-			new Vector4( 0, 0, 1, 1 )
-
-		];
-
-	}
-
-	getViewportCount() {
-
-		return this._viewportCount;
-
-	}
-
-	getFrustum() {
-
-		return this._frustum;
-
-	}
-
-	updateMatrices( light ) {
-
-		const shadowCamera = this.camera;
-		const shadowMatrix = this.matrix;
-
-		_lightPositionWorld$1.setFromMatrixPosition( light.matrixWorld );
-		shadowCamera.position.copy( _lightPositionWorld$1 );
-
-		_lookTarget$1.setFromMatrixPosition( light.target.matrixWorld );
-		shadowCamera.lookAt( _lookTarget$1 );
-		shadowCamera.updateMatrixWorld();
-
-		_projScreenMatrix$1.multiplyMatrices( shadowCamera.projectionMatrix, shadowCamera.matrixWorldInverse );
-		this._frustum.setFromProjectionMatrix( _projScreenMatrix$1 );
-
-		shadowMatrix.set(
-			0.5, 0.0, 0.0, 0.5,
-			0.0, 0.5, 0.0, 0.5,
-			0.0, 0.0, 0.5, 0.5,
-			0.0, 0.0, 0.0, 1.0
-		);
-
-		shadowMatrix.multiply( _projScreenMatrix$1 );
-
-	}
-
-	getViewport( viewportIndex ) {
-
-		return this._viewports[ viewportIndex ];
-
-	}
-
-	getFrameExtents() {
-
-		return this._frameExtents;
-
-	}
-
-	dispose() {
-
-		if ( this.map ) {
-
-			this.map.dispose();
-
-		}
-
-		if ( this.mapPass ) {
-
-			this.mapPass.dispose();
-
-		}
-
-	}
-
-	copy( source ) {
-
-		this.camera = source.camera.clone();
-
-		this.bias = source.bias;
-		this.radius = source.radius;
-
-		this.mapSize.copy( source.mapSize );
-
-		return this;
-
-	}
-
-	clone() {
-
-		return new this.constructor().copy( this );
-
-	}
-
-	toJSON() {
-
-		const object = {};
-
-		if ( this.bias !== 0 ) object.bias = this.bias;
-		if ( this.normalBias !== 0 ) object.normalBias = this.normalBias;
-		if ( this.radius !== 1 ) object.radius = this.radius;
-		if ( this.mapSize.x !== 512 || this.mapSize.y !== 512 ) object.mapSize = this.mapSize.toArray();
-
-		object.camera = this.camera.toJSON( false ).object;
-		delete object.camera.matrix;
-
-		return object;
-
-	}
-
-}
-
-class DirectionalLightShadow extends LightShadow {
-
-	constructor() {
-
-		super( new OrthographicCamera( - 5, 5, 5, - 5, 0.5, 500 ) );
-
-		this.isDirectionalLightShadow = true;
-
-	}
-
-}
-
-class DirectionalLight extends Light {
-
-	constructor( color, intensity ) {
-
-		super( color, intensity );
-
-		this.isDirectionalLight = true;
-
-		this.type = 'DirectionalLight';
+		this.type = 'HemisphereLight';
 
 		this.position.copy( Object3D.DefaultUp );
 		this.updateMatrix();
 
-		this.target = new Object3D();
-
-		this.shadow = new DirectionalLightShadow();
+		this.groundColor = new Color( groundColor );
 
 	}
 
-	dispose() {
+	copy( source, recursive ) {
 
-		this.shadow.dispose();
+		super.copy( source, recursive );
 
-	}
-
-	copy( source ) {
-
-		super.copy( source );
-
-		this.target = source.target.clone();
-		this.shadow = source.shadow.clone();
+		this.groundColor.copy( source.groundColor );
 
 		return this;
-
-	}
-
-}
-
-class AmbientLight extends Light {
-
-	constructor( color, intensity ) {
-
-		super( color, intensity );
-
-		this.isAmbientLight = true;
-
-		this.type = 'AmbientLight';
 
 	}
 
@@ -29229,98 +29054,49 @@ class ARButton {
 
 }
 
-// External Packages
+let camera, scene, renderer;
 
-document.getElementById("renderCanvas");
-document.getElementById("playBtn");
+init();
+animate();
 
-const scene = new Scene();
-let camera, renderer;
-let box;
-
-const size = {
-  width: window.innerWidth,
-  height: window.innerHeight,
-};
-
-function init() {
-  //Creates the camera (point of view of the user)
-  const aspect = size.width / size.height;
-  camera = new PerspectiveCamera(70, aspect, 0.01, 20);
-  camera.position.x = 0;
-  camera.position.y = 1.7;
-  camera.position.z = -2;
-  camera.lookAt(0, 0.9, 0);
-
-  const ambientLight = new AmbientLight(0xffffff, 0.5);
-  scene.add(ambientLight);
-
-  const directionalLight = new DirectionalLight(0xffffff, 1);
-  directionalLight.position.set(0, 10, 0);
-  directionalLight.target.position.set(-5, 0, 0);
-  scene.add(directionalLight);
-  scene.add(directionalLight.target);
-
-  renderer = new WebGLRenderer({
-    antialias: true, alpha: true
-  });
-  renderer.setSize(size.width, size.height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.xr.enabled = true;
-
+function init(){
   const container = document.createElement( 'div' );
-  container.appendChild( renderer.domElement );
+	document.body.appendChild( container );
 
-  document.body.appendChild(ARButton.createButton(
-    renderer,
-    { requiredFeatures: ["hit-test"] }
-  ));
-  //displayIntroductionMessage();
-  
-  //initOrbitControls();
+  scene = new Scene();
+  camera = new PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 20 );
+
+  const light = new HemisphereLight( 0xffffff, 0xbbbbff, 1 );
+	light.position.set( 0.5, 1, 0.25 );
+	scene.add( light );
+
+  renderer = new WebGLRenderer( { antialias: true, alpha: true } );
+	renderer.setPixelRatio( window.devicePixelRatio );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.xr.enabled = true;
+	container.appendChild( renderer.domElement );
+
+  document.body.appendChild( ARButton.createButton( renderer ) );
 
   const boxGeometry = new BoxGeometry(1, 1, 1);
   const boxMaterial = new MeshBasicMaterial({ color: 0xff0000 });
-  box = new Mesh(boxGeometry, boxMaterial);
+  const box = new Mesh(boxGeometry, boxMaterial);
   box.position.z = -3;
-
   scene.add(box);
 
 
-  animate();
+  window.addEventListener( 'resize', onWindowResize );
 }
 
-function animate(){
-  const renderLoop = () => {
-    // Rotate box
-    box.rotation.y += 0.01;
-    box.rotation.x += 0.01;
-
-    //if (renderer.xr.isPresenting) {
-      renderer.render(scene, camera);
-    //}
-  };
-  
-  renderer.setAnimationLoop(renderLoop);
-}
-
-//Animation loop
-// const animate = () => {
-
-//   renderer.render(scene, camera);
-//   controls.update;
-
-//   requestAnimationFrame(animate);
-// };
-
-init();
-//animate();
-
-//Adjust the viewport to the size of the browser
-window.addEventListener("resize", () => {
-  size.width = window.innerWidth;
-  size.height = window.innerHeight;
-  camera.aspect = size.width / size.height;
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(size.width, size.height);
-});
+  renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
+function animate() {
+  renderer.setAnimationLoop( render );
+}
+function render() {
+  renderer.render( scene, camera );
+}
