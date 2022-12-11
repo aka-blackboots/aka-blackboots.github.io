@@ -29193,7 +29193,7 @@ function init(){
 
   document.body.appendChild( ARButton.createButton( renderer ) );
 
-  const boxGeometry = new BoxGeometry(1, 1, 1);
+  const boxGeometry = new BoxGeometry(0.1, 0.1, 0.1);
 
   function onSelect() {
 
