@@ -23,6 +23,9 @@ import {
 import {
   ARButton
 } from "three/examples/jsm/webxr/ARButton.js";
+import {
+  handleXRHitTest
+} from "./utils/hitTest.js"
 
 let camera, scene, renderer;
 let controller;
@@ -103,16 +106,16 @@ function animate() {
 
 function render(timestamp, frame) {
   if (frame) {
-    // handleXRHitTest(renderer, frame, (hitPoseTransformed) => {
-    //   if (hitPoseTransformed) {
-    //     planeMarker.visible = true;
-    //     planeMarker.matrix.fromArray(hitPoseTransformed);
-    //   }
-    // }, () => {
-    //   planeMarker.visible = false;
-    // })
+    handleXRHitTest(renderer, frame, (hitPoseTransformed) => {
+      if (hitPoseTransformed) {
+        planeMarker.visible = true;
+        planeMarker.matrix.fromArray(hitPoseTransformed);
+      }
+    }, () => {
+      planeMarker.visible = false;
+    })
 
-    box.rotation.x += 0.4;
+    box.rotation.x += 0.04;
   }
 
   renderer.render(scene, camera);

@@ -29165,6 +29165,59 @@ class ARButton {
 
 }
 
+/* Credit 
+Code Adapted From - https://github.com/mrdoob/three.js/blob/master/examples/webxr_ar_hittest.html 
+https://immersive-web.github.io/webxr/spatial-tracking-explainer.html#reference-spaces
+https://medium.com/sopra-steria-norge/get-started-with-augmented-reality-on-the-web-using-three-js-and-webxr-part-2-f10861cd1f1d
+*/
+
+function handleXRHitTest(
+    renderer,
+    frame,
+    onHitTestResultReady,
+    onHitTestResultEmpty,
+) {
+    const referenceSpace = renderer.xr.getReferenceSpace();
+    const session = renderer.xr.getSession();
+
+    let xrHitPoseMatrix;
+
+    if (session && hitTestSourceRequested === false) {
+        session.requestReferenceSpace("viewer").then((referenceSpace) => {
+            if (session) {
+                session
+                    .requestHitTestSource({
+                        space: referenceSpace
+                    })
+                    .then((source) => {
+                        hitTestSource = source;
+                    });
+            }
+        });
+
+        hitTestSourceRequested = true;
+    }
+
+    if (hitTestSource) {
+        const hitTestResults = frame.getHitTestResults(hitTestSource);
+
+        if (hitTestResults.length) {
+            const hit = hitTestResults[0];
+
+            if (hit && hit !== null && referenceSpace) {
+                const xrHitPose = hit.getPose(referenceSpace);
+
+                if (xrHitPose) {
+                    xrHitPoseMatrix = xrHitPose.transform.matrix;
+                    onHitTestResultReady(xrHitPoseMatrix);
+                }
+            }
+        } else {
+            onHitTestResultEmpty();
+        }
+    }
+}
+
 let camera, scene, renderer;
 let box, planeMarker;
 
@@ -29233,16 +29286,16 @@ function animate() {
 
 function render(timestamp, frame) {
   if (frame) {
-    // handleXRHitTest(renderer, frame, (hitPoseTransformed) => {
-    //   if (hitPoseTransformed) {
-    //     planeMarker.visible = true;
-    //     planeMarker.matrix.fromArray(hitPoseTransformed);
-    //   }
-    // }, () => {
-    //   planeMarker.visible = false;
-    // })
+    handleXRHitTest(renderer, frame, (hitPoseTransformed) => {
+      if (hitPoseTransformed) {
+        planeMarker.visible = true;
+        planeMarker.matrix.fromArray(hitPoseTransformed);
+      }
+    }, () => {
+      planeMarker.visible = false;
+    });
 
-    box.rotation.x += 0.4;
+    box.rotation.x += 0.04;
   }
 
   renderer.render(scene, camera);
