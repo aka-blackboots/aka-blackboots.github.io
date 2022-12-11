@@ -111,7 +111,7 @@ function initBaseScene() {
   const controller = renderer.xr.getController(0);
   scene.add(controller);
 
-  //controller.addEventListener("select", showModel);
+  controller.addEventListener("select", changeModelLoc);
 
   //addModel();
   playerApi = createPlayerApi(scene);
@@ -146,6 +146,7 @@ function createPlayerApi(scene){
   renderSystem.onAssetCreated = (asset) => {
       console.log('evercoast mesh asset created');
       scene.add(asset);
+      humanEverCoastModel = asset;
   }
   playerApiConfig.renderSystem = renderSystem;
 
@@ -181,7 +182,7 @@ function createPlayerApi(scene){
   return playerApi;
 }
 
-function showModel() {
+function changeModelLoc() {
   //alert("Select Tap");
   if (planeMarker.visible) {
   
