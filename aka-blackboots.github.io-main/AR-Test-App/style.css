@@ -1,0 +1,33 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    overflow: hidden;
+}
+
+button {
+    position: absolute;
+    bottom: 30px;
+    left: calc(50vw - 75px);
+    z-index: 100;
+    font-size: xx-large;
+    width: 150px;
+}
+
+#renderCanvas {
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+
+.renderer {
+    pointer-events: none;
+}
+
+.scene {
+    pointer-events: none;
+}
