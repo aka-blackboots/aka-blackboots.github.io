@@ -112,7 +112,7 @@ function render(timestamp, frame) {
       planeMarker.visible = false;
     })
 
-    box.rotateX =+ 0.4;
+    box.rotation.x += 0.4;
   }
 
   renderer.render(scene, camera);
