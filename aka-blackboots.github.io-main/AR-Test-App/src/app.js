@@ -103,14 +103,14 @@ function animate() {
 
 function render(timestamp, frame) {
   if (frame) {
-    handleXRHitTest(renderer, frame, (hitPoseTransformed) => {
-      if (hitPoseTransformed) {
-        planeMarker.visible = true;
-        planeMarker.matrix.fromArray(hitPoseTransformed);
-      }
-    }, () => {
-      planeMarker.visible = false;
-    })
+    // handleXRHitTest(renderer, frame, (hitPoseTransformed) => {
+    //   if (hitPoseTransformed) {
+    //     planeMarker.visible = true;
+    //     planeMarker.matrix.fromArray(hitPoseTransformed);
+    //   }
+    // }, () => {
+    //   planeMarker.visible = false;
+    // })
 
     box.rotation.x += 0.4;
   }
