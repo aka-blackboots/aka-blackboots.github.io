@@ -36,7 +36,7 @@ const size = {
 function init() {
   //Creates the camera (point of view of the user)
   const aspect = size.width / size.height;
-  camera = new PerspectiveCamera(75, aspect);
+  camera = new PerspectiveCamera(70, aspect, 0.01, 20);
   camera.position.x = 0;
   camera.position.y = 1.7;
   camera.position.z = -2;
@@ -52,14 +52,14 @@ function init() {
   scene.add(directionalLight.target);
 
   renderer = new WebGLRenderer({
-    antialias: true,
-    alpha: true,
-    canvas: canvas
+    antialias: true, alpha: true
   });
   renderer.setSize(size.width, size.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setClearColor(0xc9c9c9);
   renderer.xr.enabled = true;
+
+  const container = document.createElement( 'div' );
+  container.appendChild( renderer.domElement );
 
   document.body.appendChild(ARButton.createButton(
     renderer,
@@ -67,7 +67,7 @@ function init() {
   ));
   //displayIntroductionMessage();
   
-  initOrbitControls();
+  //initOrbitControls();
 
   const boxGeometry = new BoxGeometry(1, 1, 1);
   const boxMaterial = new MeshBasicMaterial({ color: 0xff0000 });
