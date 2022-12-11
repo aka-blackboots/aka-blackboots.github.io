@@ -105,7 +105,7 @@ function addModel() {
   dracoLoader.setDecoderPath('/examples/js/libs/draco/');
   gltfLoader.setDRACOLoader(dracoLoader);
 
-  gltfLoader.load("./../models/koala2.glb", (gltf) => {
+  gltfLoader.load("https://joyful-basbousa-d571da.netlify.app/aka-blackboots.github.io-main/ar-test-app/models/koala2.glb", (gltf) => {
     humanEverCoastModel = gltf.scene.children[0];
     console.log(humanEverCoastModel);
     scene.add(humanEverCoastModel);
