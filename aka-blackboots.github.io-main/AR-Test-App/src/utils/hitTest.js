@@ -3,6 +3,8 @@ Code Adapted From - https://github.com/mrdoob/three.js/blob/master/examples/webx
 https://immersive-web.github.io/webxr/spatial-tracking-explainer.html#reference-spaces
 https://medium.com/sopra-steria-norge/get-started-with-augmented-reality-on-the-web-using-three-js-and-webxr-part-2-f10861cd1f1d
 */
+let hitTestSource = null;
+let hitTestSourceRequested = false;
 
 export function handleXRHitTest(
     renderer,

@@ -117,7 +117,7 @@ function render(timestamp, frame) {
 
     box.rotation.x += 0.04;
   }
-
+  console.log(renderer.xr);
   renderer.render(scene, camera);
 }
 
