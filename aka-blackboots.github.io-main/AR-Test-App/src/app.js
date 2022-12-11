@@ -57,6 +57,8 @@ function init(){
     scene.add( mesh );
 
   }
+  controller = renderer.xr.getController( 0 );
+	controller.addEventListener( 'select', onSelect );
 
   window.addEventListener( 'resize', onWindowResize );
 }
