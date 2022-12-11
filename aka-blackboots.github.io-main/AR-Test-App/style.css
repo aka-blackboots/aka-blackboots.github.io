@@ -9,10 +9,11 @@ body {
     overflow: hidden;
 }
 
-button {
+#playBtn {
     position: absolute;
     bottom: 30px;
-    left: calc(50vw - 75px);
+    /* left: calc(50vw - 75px); */
+    left: 30px;
     z-index: 100;
     font-size: xx-large;
     width: 150px;

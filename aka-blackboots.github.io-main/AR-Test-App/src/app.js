@@ -17,6 +17,7 @@ import {
 import {
   OrbitControls
 } from "three/examples/jsm/controls/OrbitControls.js";
+import { ARButton } from 'three/addons/webxr/ARButton.js';
 
 // External Packages
 
@@ -57,6 +58,13 @@ function init() {
   renderer.setSize(size.width, size.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setClearColor(0xc9c9c9);
+  renderer.xr.enabled = true;
+
+  document.body.appendChild(ARButton.createButton(
+    renderer,
+    { requiredFeatures: ["hit-test"] },
+  ));
+  //displayIntroductionMessage();
   
   initOrbitControls();
 }
