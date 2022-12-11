@@ -61,6 +61,8 @@ function init() {
   scene.add(box);
   // End of Assets
 
+  initBaseScene();
+
   // Pass the renderer to the createScene-funtion.
   //createScene(renderer);
   // Display a welcome message to the user.
