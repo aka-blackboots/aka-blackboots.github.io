@@ -39877,10 +39877,12 @@ function addModel() {
 
   gltfLoader.load("./../models/koala.glb", (gltf) => {
     humanEverCoastModel = gltf.scene.children[0];
+    console.log(humanEverCoastModel);
   });
 }
 
 function showModel() {
+  alert("Select Tap");
   if (planeMarker.visible) {
     const model = humanEverCoastModel.clone();
 
