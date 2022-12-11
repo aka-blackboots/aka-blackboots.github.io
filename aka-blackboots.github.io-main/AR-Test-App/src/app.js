@@ -33,9 +33,15 @@ import {
   DRACOLoader
 } from "three/examples/jsm/loaders/DRACOLoader.js";
 
+// External Packages
+import EvercoastPlayerApi from 'evercoast-player-api';
+import { EvercoastPlayerApiConfig } from 'evercoast-player-api'
+import EvercoastThreeJSRenderSystem from 'evercoast-renderers/lib/evercoast-threejs-rendersystem'
+
 let camera, scene, renderer;
 let controller;
 let box, planeMarker, humanEverCoastModel;
+let playerApi;
 
 init();
 animate();
@@ -46,6 +52,10 @@ function init() {
 
   scene = new Scene();
   camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+  camera.position.x = 0;
+  camera.position.y = 1.7;
+  camera.position.z = -2;
+  camera.lookAt(0, 0.9, 0)
 
   renderer = new WebGLRenderer({
     antialias: true,
@@ -85,17 +95,23 @@ function initBaseScene() {
   light.position.set(0.5, 1, 0.25);
   scene.add(light);
 
+  const directionalLight = new DirectionalLight(0xffffff, 1);
+  directionalLight.position.set(0, 10, 0);
+  directionalLight.target.position.set(-5, 0, 0);
+  scene.add(directionalLight);
+  scene.add(directionalLight.target);
 
   planeMarker = createPlaneMarker();
   scene.add(planeMarker);
-
-  addModel();
 
   // Controller 
   const controller = renderer.xr.getController(0);
   scene.add(controller);
 
-  controller.addEventListener("select", showModel);
+  //controller.addEventListener("select", showModel);
+
+  addModel();
+  playerApi = createPlayerApi(scene);
 }
 
 function addModel() {
@@ -114,6 +130,53 @@ function addModel() {
   console.log(planeMarker.matrix);
 }
 
+function createPlayerApi(scene){
+  console.log(scene);
+
+  const playerApiConfig = new EvercoastPlayerApiConfig();
+  console.log(playerApiConfig)
+  const root = location.origin + '/';
+
+  playerApiConfig.root = root;
+  const renderSystem = new EvercoastThreeJSRenderSystem(renderer);
+  renderSystem.onAssetCreated = (asset) => {
+      console.log('evercoast mesh asset created');
+      scene.add(asset);
+  }
+  playerApiConfig.renderSystem = renderSystem;
+
+  playerApiConfig.maxFramerate = 15; //isMobileDevice ? 15 : 30;
+
+  const playerApi = new EvercoastPlayerApi(
+      renderer.getContext(),
+      playerApiConfig
+  );
+
+  playBtn.disabled = true;
+
+  playerApi.open('https://streaming.evercoast.com/Verizon/NEWTEST.BEN.ec.take.005/3167/NEWTEST.BEN.ec.take.005.ecm');
+
+  playerApi.enableLooping(true);
+
+  playBtn.addEventListener('click', () => {
+      if(playBtn.innerText == 'Play') {
+          playerApi.play();
+      } else {
+          playerApi.pause();
+      }
+  })
+
+  playerApi.onPaused.add(() => {
+      playBtn.innerText = 'Play';
+  })
+
+  playerApi.onResumed.add(() => {
+      playBtn.innerText = 'Pause';
+  })
+
+  return playerApi;
+}
+
 function showModel() {
   //alert("Select Tap");
   if (planeMarker.visible) {
@@ -126,15 +189,7 @@ function showModel() {
   }
 }
 
-async function start() {
-  // Check if browser supports WebXR with "immersive-ar".
-  const immersiveArSupported = await browserHasImmersiveArCompatibility();
 
-  // Initialize app if supported.
-  immersiveArSupported ?
-    initializeXRApp() :
-    displayUnsupportedBrowserMessage();
-};
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -158,11 +213,24 @@ function render(timestamp, frame) {
     })
 
     box.rotation.x += 0.04;
+
+    updatePlayer();
   }
   renderer.render(scene, camera);
+
+
 }
 
-
+function updatePlayer(){
+  playerApi.beginRenderFrame();
+  playerApi.update();
+  if(playerApi.render()) {
+      if(playBtn.disabled) {
+          playBtn.disabled = false;
+      }
+  }
+  playerApi.endRenderFrame();
+}
 
 
 /* Shift To Different File, Vish - Make it little nice with interactive UI */
