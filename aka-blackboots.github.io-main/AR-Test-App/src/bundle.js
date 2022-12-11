@@ -28742,120 +28742,6 @@ class Scene extends Object3D {
 
 }
 
-class MeshPhongMaterial extends Material {
-
-	constructor( parameters ) {
-
-		super();
-
-		this.isMeshPhongMaterial = true;
-
-		this.type = 'MeshPhongMaterial';
-
-		this.color = new Color( 0xffffff ); // diffuse
-		this.specular = new Color( 0x111111 );
-		this.shininess = 30;
-
-		this.map = null;
-
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
-
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
-
-		this.emissive = new Color( 0x000000 );
-		this.emissiveIntensity = 1.0;
-		this.emissiveMap = null;
-
-		this.bumpMap = null;
-		this.bumpScale = 1;
-
-		this.normalMap = null;
-		this.normalMapType = TangentSpaceNormalMap;
-		this.normalScale = new Vector2( 1, 1 );
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.specularMap = null;
-
-		this.alphaMap = null;
-
-		this.envMap = null;
-		this.combine = MultiplyOperation;
-		this.reflectivity = 1;
-		this.refractionRatio = 0.98;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
-
-		this.flatShading = false;
-
-		this.fog = true;
-
-		this.setValues( parameters );
-
-	}
-
-	copy( source ) {
-
-		super.copy( source );
-
-		this.color.copy( source.color );
-		this.specular.copy( source.specular );
-		this.shininess = source.shininess;
-
-		this.map = source.map;
-
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
-
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
-
-		this.emissive.copy( source.emissive );
-		this.emissiveMap = source.emissiveMap;
-		this.emissiveIntensity = source.emissiveIntensity;
-
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
-
-		this.normalMap = source.normalMap;
-		this.normalMapType = source.normalMapType;
-		this.normalScale.copy( source.normalScale );
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.specularMap = source.specularMap;
-
-		this.alphaMap = source.alphaMap;
-
-		this.envMap = source.envMap;
-		this.combine = source.combine;
-		this.reflectivity = source.reflectivity;
-		this.refractionRatio = source.refractionRatio;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
-
-		this.flatShading = source.flatShading;
-
-		this.fog = source.fog;
-
-		return this;
-
-	}
-
-}
-
 class Light extends Object3D {
 
 	constructor( color, intensity = 1 ) {
@@ -29169,7 +29055,7 @@ class ARButton {
 }
 
 let camera, scene, renderer;
-let controller;
+let box;
 
 init();
 animate();
@@ -29191,21 +29077,21 @@ function init(){
 	renderer.xr.enabled = true;
 	container.appendChild( renderer.domElement );
 
-  document.body.appendChild( ARButton.createButton( renderer ) );
+  document.body.appendChild(ARButton.createButton( renderer,
+    {requiredFeatures: ["hit-test"]},
+  ));
 
-  const boxGeometry = new BoxGeometry(0.1, 0.1, 0.1);
+  // Add Assets
+  const boxGeometry = new BoxGeometry(1, 1, 1);
+  const boxMaterial = new MeshBasicMaterial({ color: 0xff0000 });
+  box = new Mesh(boxGeometry, boxMaterial);
+  box.position.z = -3;
+  // End of Assets
 
-  function onSelect() {
-
-    const material = new MeshPhongMaterial( { color: 0xffffff * Math.random() } );
-    const mesh = new Mesh( boxGeometry, material );
-    mesh.position.set( 0, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
-    mesh.quaternion.setFromRotationMatrix( controller.matrixWorld );
-    scene.add( mesh );
-
-  }
-  controller = renderer.xr.getController( 0 );
-	controller.addEventListener( 'select', onSelect );
+  // Pass the renderer to the createScene-funtion.
+  //createScene(renderer);
+  // Display a welcome message to the user.
+  //displayIntroductionMessage();
 
   window.addEventListener( 'resize', onWindowResize );
 }
@@ -29220,5 +29106,8 @@ function animate() {
   renderer.setAnimationLoop( render );
 }
 function render() {
+  box.rotation.y += 0.01;
+  box.rotation.x += 0.01;
+  
   renderer.render( scene, camera );
 }

@@ -23,6 +23,7 @@ import { ARButton } from "three/examples/jsm/webxr/ARButton.js";
 
 let camera, scene, renderer;
 let controller;
+let box;
 
 init();
 animate();
@@ -44,24 +45,34 @@ function init(){
 	renderer.xr.enabled = true;
 	container.appendChild( renderer.domElement );
 
-  document.body.appendChild( ARButton.createButton( renderer ) );
+  document.body.appendChild(ARButton.createButton( renderer,
+    {requiredFeatures: ["hit-test"]},
+  ));
 
-  const boxGeometry = new BoxGeometry(0.1, 0.1, 0.1);
+  // Add Assets
+  const boxGeometry = new BoxGeometry(1, 1, 1);
+  const boxMaterial = new MeshBasicMaterial({ color: 0xff0000 });
+  box = new Mesh(boxGeometry, boxMaterial);
+  box.position.z = -3;
+  // End of Assets
 
-  function onSelect() {
-
-    const material = new MeshPhongMaterial( { color: 0xffffff * Math.random() } );
-    const mesh = new Mesh( boxGeometry, material );
-    mesh.position.set( 0, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
-    mesh.quaternion.setFromRotationMatrix( controller.matrixWorld );
-    scene.add( mesh );
-
-  }
-  controller = renderer.xr.getController( 0 );
-	controller.addEventListener( 'select', onSelect );
+  // Pass the renderer to the createScene-funtion.
+  //createScene(renderer);
+  // Display a welcome message to the user.
+  //displayIntroductionMessage();
 
   window.addEventListener( 'resize', onWindowResize );
 }
+
+async function start() {
+  // Check if browser supports WebXR with "immersive-ar".
+  const immersiveArSupported = await browserHasImmersiveArCompatibility();
+  
+  // Initialize app if supported.
+  immersiveArSupported ?
+    initializeXRApp() : 
+    displayUnsupportedBrowserMessage();
+};
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -73,5 +84,8 @@ function animate() {
   renderer.setAnimationLoop( render );
 }
 function render() {
+  box.rotation.y += 0.01;
+  box.rotation.x += 0.01;
+  
   renderer.render( scene, camera );
 }
