@@ -106,6 +106,7 @@ function initBaseScene() {
 
   planeMarker = createPlaneMarker();
   scene.add(planeMarker);
+  planeMarker.visible = false;
 
   // Controller 
   const controller = renderer.xr.getController(0);
@@ -130,7 +131,6 @@ function addModel() {
     scene.add(humanEverCoastModel);
   });
 
-  console.log(planeMarker.matrix);
 }
 
 function createPlayerApi(scene){
@@ -147,6 +147,7 @@ function createPlayerApi(scene){
       console.log('evercoast mesh asset created');
       scene.add(asset);
       humanEverCoastModel = asset;
+      humanEverCoastModel.visible = false;
   }
   playerApiConfig.renderSystem = renderSystem;
 
@@ -187,10 +188,9 @@ function changeModelLoc() {
   if (planeMarker.visible) {
   
     humanEverCoastModel.position.setFromMatrixPosition(planeMarker.matrix);
-
     // Rotate the model randomly to give a bit of variation to the scene.
     humanEverCoastModel.rotation.y = Math.random() * (Math.PI * 2);
-    //humanEverCoastModel.visible = true;
+    humanEverCoastModel.visible = true;
   }
 }
 
