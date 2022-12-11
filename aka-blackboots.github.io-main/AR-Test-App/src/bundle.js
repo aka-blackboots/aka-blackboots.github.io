@@ -29078,12 +29078,7 @@ function init(){
 
   document.body.appendChild( ARButton.createButton( renderer ) );
 
-  const boxGeometry = new BoxGeometry(1, 1, 1);
-  const boxMaterial = new MeshBasicMaterial({ color: 0xff0000 });
-  const box = new Mesh(boxGeometry, boxMaterial);
-  box.position.z = -3;
-  scene.add(box);
-
+  new BoxGeometry(1, 1, 1);
 
   window.addEventListener( 'resize', onWindowResize );
 }

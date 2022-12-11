@@ -9,6 +9,7 @@ import {
   HemisphereLight,
   Mesh,
   MeshBasicMaterial,
+  MeshPhongMaterial,
   MeshStandardMaterial,
   PerspectiveCamera,
   PlaneGeometry,
@@ -46,11 +47,16 @@ function init(){
   document.body.appendChild( ARButton.createButton( renderer ) );
 
   const boxGeometry = new BoxGeometry(1, 1, 1);
-  const boxMaterial = new MeshBasicMaterial({ color: 0xff0000 });
-  const box = new Mesh(boxGeometry, boxMaterial);
-  box.position.z = -3;
-  scene.add(box);
 
+  function onSelect() {
+
+    const material = new MeshPhongMaterial( { color: 0xffffff * Math.random() } );
+    const mesh = new Mesh( boxGeometry, material );
+    mesh.position.set( 0, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
+    mesh.quaternion.setFromRotationMatrix( controller.matrixWorld );
+    scene.add( mesh );
+
+  }
 
   window.addEventListener( 'resize', onWindowResize );
 }
