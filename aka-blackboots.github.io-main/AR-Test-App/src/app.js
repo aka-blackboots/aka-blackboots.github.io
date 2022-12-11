@@ -139,7 +139,7 @@ function createPlayerApi(scene){
   const playerApiConfig = new EvercoastPlayerApiConfig();
   console.log(playerApiConfig)
   //const root = location.origin + '/';
-  const root = "https://joyful-basbousa-d571da.netlify.app/aka-blackboots.github.io-main/ar-test-app/"
+  const root = "https://joyful-basbousa-d571da.netlify.app/aka-blackboots.github.io-main/ar-test-app//src/evercoast-helpers/"
 
   playerApiConfig.root = root;
   const renderSystem = new EvercoastThreeJSRenderSystem(renderer);
