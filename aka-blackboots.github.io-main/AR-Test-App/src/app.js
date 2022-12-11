@@ -25,11 +25,17 @@ import {
 } from "three/examples/jsm/webxr/ARButton.js";
 import {
   handleXRHitTest
-} from "./utils/hitTest.js"
+} from "./utils/hitTest.js";
+import {
+  GLTFLoader
+} from "three/examples/jsm/loaders/GLTFLoader.js";
+import {
+  DRACOLoader
+} from "three/examples/jsm/loaders/DRACOLoader.js";
 
 let camera, scene, renderer;
 let controller;
-let box, planeMarker;
+let box, planeMarker, humanEverCoastModel;
 
 init();
 animate();
@@ -82,6 +88,40 @@ function initBaseScene() {
 
   planeMarker = createPlaneMarker();
   scene.add(planeMarker);
+
+  addModel();
+
+  // Controller 
+  const controller = renderer.xr.getController(0);
+  scene.add(controller);
+
+  controller.addEventListener("select", showModel);
+}
+
+function addModel() {
+  const gltfLoader = new GLTFLoader();
+
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath('/examples/js/libs/draco/');
+  gltfLoader.setDRACOLoader(dracoLoader);
+
+  gltfLoader.load("./../models/koala.glb", (gltf) => {
+    humanEverCoastModel = gltf.scene.children[0];
+  });
+}
+
+function showModel() {
+  if (planeMarker.visible) {
+    const model = humanEverCoastModel.clone();
+
+    model.position.setFromMatrixPosition(planeMarker.matrix);
+
+    // Rotate the model randomly to give a bit of variation to the scene.
+    model.rotation.y = Math.random() * (Math.PI * 2);
+    model.visible = true;
+
+    scene.add(model);
+  }
 }
 
 async function start() {
@@ -117,7 +157,6 @@ function render(timestamp, frame) {
 
     box.rotation.x += 0.04;
   }
-  console.log(renderer.xr);
   renderer.render(scene, camera);
 }
 
