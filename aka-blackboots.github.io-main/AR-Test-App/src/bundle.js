@@ -39878,21 +39878,21 @@ function addModel() {
   gltfLoader.load("./../models/koala.glb", (gltf) => {
     humanEverCoastModel = gltf.scene.children[0];
     console.log(humanEverCoastModel);
+    scene.add(humanEverCoastModel);
   });
+
+  console.log(planeMarker.matrix);
 }
 
 function showModel() {
-  alert("Select Tap");
+  //alert("Select Tap");
   if (planeMarker.visible) {
-    const model = humanEverCoastModel.clone();
-
-    model.position.setFromMatrixPosition(planeMarker.matrix);
+  
+    humanEverCoastModel.position.setFromMatrixPosition(planeMarker.matrix);
 
     // Rotate the model randomly to give a bit of variation to the scene.
-    model.rotation.y = Math.random() * (Math.PI * 2);
-    model.visible = true;
-
-    scene.add(model);
+    humanEverCoastModel.rotation.y = Math.random() * (Math.PI * 2);
+    //humanEverCoastModel.visible = true;
   }
 }
 
