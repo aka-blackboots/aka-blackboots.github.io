@@ -19,6 +19,10 @@ body {
     width: 150px;
 }
 
+#ARButton{
+    right: 10px!important;
+}
+
 #renderCanvas {
     width: 100%;
     height: 100%;

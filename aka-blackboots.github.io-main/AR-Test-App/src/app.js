@@ -17,7 +17,7 @@ import {
 import {
   OrbitControls
 } from "three/examples/jsm/controls/OrbitControls.js";
-import { ARButton } from 'three/addons/webxr/ARButton.js';
+import { ARButton } from "./ARButton.js";
 
 // External Packages
 
@@ -26,6 +26,7 @@ const playBtn = document.getElementById("playBtn");
 
 const scene = new Scene();
 let camera, renderer, controls;
+let box;
 
 const size = {
   width: window.innerWidth,
@@ -62,12 +63,46 @@ function init() {
 
   document.body.appendChild(ARButton.createButton(
     renderer,
-    { requiredFeatures: ["hit-test"] },
+    { requiredFeatures: ["hit-test"] }
   ));
   //displayIntroductionMessage();
   
   initOrbitControls();
+
+  const boxGeometry = new BoxGeometry(1, 1, 1);
+  const boxMaterial = new MeshBasicMaterial({ color: 0xff0000 });
+  box = new Mesh(boxGeometry, boxMaterial);
+  box.position.z = -3;
+
+  scene.add(box);
+
+
+  animate();
 }
+
+function animate(){
+  const renderLoop = () => {
+    // Rotate box
+    box.rotation.y += 0.01;
+    box.rotation.x += 0.01;
+
+    //if (renderer.xr.isPresenting) {
+      renderer.render(scene, camera);
+    //}
+  }
+  
+  renderer.setAnimationLoop(renderLoop);
+}
+
+async function start() {
+  // Check if browser supports WebXR with "immersive-ar".
+  const immersiveArSupported = await browserHasImmersiveArCompatibility();
+  
+  // Initialize app if supported.
+  immersiveArSupported ?
+    initializeXRApp() : 
+    displayUnsupportedBrowserMessage();
+};
 
 function initOrbitControls(){
   controls = new OrbitControls(camera, renderer.domElement);
@@ -77,16 +112,16 @@ function initOrbitControls(){
 }
 
 //Animation loop
-const animate = () => {
+// const animate = () => {
 
-  renderer.render(scene, camera);
-  controls.update;
+//   renderer.render(scene, camera);
+//   controls.update;
 
-  requestAnimationFrame(animate);
-};
+//   requestAnimationFrame(animate);
+// };
 
 init();
-animate();
+//animate();
 
 //Adjust the viewport to the size of the browser
 window.addEventListener("resize", () => {
