@@ -18,7 +18,7 @@ import {
 import {
   OrbitControls
 } from "three/examples/jsm/controls/OrbitControls.js";
-import { ARButton } from "./ARButton.js";
+import { ARButton } from "three/examples/jsm/webxr/ARButton.js";
 
 let camera, scene, renderer;
 let controller;
