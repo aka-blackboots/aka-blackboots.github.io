@@ -29086,6 +29086,7 @@ function init(){
   const boxMaterial = new MeshBasicMaterial({ color: 0xff0000 });
   box = new Mesh(boxGeometry, boxMaterial);
   box.position.z = -3;
+  scene.add(box);
   // End of Assets
 
   // Pass the renderer to the createScene-funtion.
