@@ -29745,7 +29745,7 @@ async function checkXRCapacity(){
         );
 
         if(xrSupport){
-            document.getElementById("ar-message-span").innerText = "Your Device Supports JIO AR 🚀";
+            document.getElementById("ar-message-span").innerHTML = "Your Device Supports JIO AR 🚀 <br/><br/>Tap to Place Model, Swipe to Rotate";
         }
         else {
             document.getElementById("ar-message-span").innerHTML = "Your Device Doesn't Support JIO AR 😧⏳ <br/><br/> Use Chrome on Android";
@@ -29846,7 +29846,8 @@ function createPlayerApi(scene) {
     console.log('evercoast mesh asset created');
     scene.add(asset);
     humanEverCoastModel = asset;
-    humanEverCoastModel.visible = false;
+    //humanEverCoastModel.visible = false;
+    humanEverCoastModel.rotation.y = (Math.PI);
   };
   playerApiConfig.renderSystem = renderSystem;
 
@@ -29862,14 +29863,15 @@ function createPlayerApi(scene) {
   playerApi.open('https://streaming.evercoast.com/Verizon/NEWTEST.BEN.ec.take.005/3167/NEWTEST.BEN.ec.take.005.ecm');
 
   playerApi.enableLooping(true);
+  playerApi.play();
 
-  playBtn.addEventListener('click', () => {
-    if (playBtn.innerText == 'Play') {
-      playerApi.play();
-    } else {
-      playerApi.pause();
-    }
-  });
+  // playBtn.addEventListener('click', () => {
+  //   if (playBtn.innerText == 'Play') {
+  //     playerApi.play();
+  //   } else {
+  //     playerApi.pause();
+  //   }
+  // })
 
   playerApi.onPaused.add(() => {
     playBtn.innerText = 'Play';
@@ -29878,14 +29880,13 @@ function createPlayerApi(scene) {
   playerApi.onResumed.add(() => {
     playBtn.innerText = 'Pause';
   });
-
   return playerApi;
 }
 
 function changeModelLoc() {
   if (planeMarker.visible) {
     humanEverCoastModel.position.setFromMatrixPosition(planeMarker.matrix);
-    humanEverCoastModel.rotation.y = (Math.PI * 2);
+    humanEverCoastModel.rotation.y = (Math.PI/2);
     humanEverCoastModel.visible = true;
   }
 }
@@ -29912,7 +29913,10 @@ function render(timestamp, frame) {
     }, () => {
       planeMarker.visible = false;
     });
+    
+    playerApi.play();
   }
+
   renderer.render(scene, camera);
   labelRenderer.render( scene, camera );
   updatePlayer();
