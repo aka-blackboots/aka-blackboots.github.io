@@ -22,10 +22,13 @@ import {
 import {
   checkXRCapacity
 } from "./utils/checkXRCapacity.js";
+import {
+  OrbitControls
+} from "three/examples/jsm/controls/OrbitControls.js";
 
 const playBtn = document.getElementById("playBtn");
 
-let camera, scene, renderer;
+let camera, scene, renderer, controls;
 let planeMarker, humanEverCoastModel;
 let playerApi;
 
@@ -62,6 +65,16 @@ function init() {
 
   // Event Listeners
   window.addEventListener('resize', onWindowResize);
+
+  initOrbitControls();
+}
+
+function initOrbitControls(){
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.2;
+  controls.target.set(0, 1, 0);
+  controls.update();
 }
 
 function initBaseScene() {
@@ -154,6 +167,8 @@ function render(timestamp, frame) {
   }
 
   renderer.render(scene, camera);
+  controls.update();
+  
   updatePlayer();
 }
 
@@ -229,14 +244,14 @@ function updatePlayer() {
 //   }
 // }, false);
 
-var stage = document.getElementById('scene-container');
-var hamManager = new Hammer(stage);
-//console.log(hamManager.get("pinch").set({enable: true}));
-//hamManager.get("pinchin").set({ enable: true });
-hamManager.on("pan", handleScale);
+// var stage = document.getElementById('scene-container');
+// var hamManager = new Hammer(stage);
+// //console.log(hamManager.get("pinch").set({enable: true}));
+// //hamManager.get("pinchin").set({ enable: true });
+// hamManager.on("pan", handleScale);
 
-function handleScale(){
-  alert("Pinched In");
-}
+// function handleScale(){
+//   alert("Pinched In");
+// }
 
 
