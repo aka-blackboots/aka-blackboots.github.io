@@ -183,17 +183,18 @@ function updatePlayer() {
 var stage = document.getElementById('scene-container');
 var hamManager = new Hammer(stage);
 hamManager.on("panleft", moveModelLeft);
-hamManager.on("panRight", moveModelRight);
+hamManager.on("panright", moveModelRight);
 hamManager.on("panup", scaleModelBig);
 hamManager.on("pandown", scaleModelSmall);
 
 
 
 function moveModelLeft(){
-  alert("Model Move Left");
+  console.log("Model Move Left");
   humanEverCoastModel.rotation.y += 0.02;
 }
 function moveModelRight(){
+  console.log("Model Move Right");
   humanEverCoastModel.rotation.y -= 0.02;
 }
 function scaleModelBig(){
