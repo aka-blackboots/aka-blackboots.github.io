@@ -29708,6 +29708,8 @@ function updatePlayer() {
 let startTouch = 0;
 let endTouch = 0;
 renderer.domElement.addEventListener('touchmove', function(e){
+  e.preventDefault();
+  
   startTouch = e.changedTouches[0].clientX;
   
   if(startTouch > endTouch){
