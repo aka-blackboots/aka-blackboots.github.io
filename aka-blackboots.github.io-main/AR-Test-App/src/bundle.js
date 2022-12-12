@@ -29704,62 +29704,62 @@ function updatePlayer() {
 //   });
 // }
 
-let startTouchX = 0, startTouchY = 0;
-let endTouchX = 0, endTouchY = 0;
-renderer.domElement.addEventListener('touchmove', function(e){
-  e.preventDefault();
+// let startTouchX = 0, startTouchY = 0;
+// let endTouchX = 0, endTouchY = 0;
+// renderer.domElement.addEventListener('touchmove', function(e){
+//   e.preventDefault();
 
-  startTouchX = e.changedTouches[0].clientX;
-  startTouchY = e.changedTouches[0].clientY;
+//   startTouchX = e.changedTouches[0].clientX;
+//   startTouchY = e.changedTouches[0].clientY;
   
-  if(startTouchX > endTouchX){
-    //"Rotate Left"
-    if(humanEverCoastModel.visible){
-      humanEverCoastModel.rotation.y += 0.02;
-    }
-  }
-  else {
-    //"Rotate Right"
-    if(humanEverCoastModel.visible){
-      humanEverCoastModel.rotation.y -= 0.02;
-    }
-  }
+//   if(startTouchX > endTouchX){
+//     //"Rotate Left"
+//     if(humanEverCoastModel.visible){
+//       humanEverCoastModel.rotation.y += 0.02;
+//     }
+//   }
+//   else{
+//     //"Rotate Right"
+//     if(humanEverCoastModel.visible){
+//       humanEverCoastModel.rotation.y -= 0.02;
+//     }
+//   }
 
-  // Scale Effect
-  if(startTouchY > endTouchY){
-    //"Rotate Left"
-    if(humanEverCoastModel.visible){
-      //humanEverCoastModel.rotation.y += 0.02;
-      console.log("Rolling Up");
-    }
-  }
-  else {
-    //"Rotate Right"
-    if(humanEverCoastModel.visible){
-      console.log("Rolling Down");
-      //humanEverCoastModel.rotation.y -= 0.02;
-    }
-  }
+//   // Scale Effect
+//   if(startTouchY > endTouchY){
+//     //"Rotate Left"
+//     if(humanEverCoastModel.visible){
+//       //humanEverCoastModel.rotation.y += 0.02;
+//       console.log("Rolling Up");
+//     }
+//   }
+//   else{
+//     //"Rotate Right"
+//     if(humanEverCoastModel.visible){
+//       console.log("Rolling Down");
+//       //humanEverCoastModel.rotation.y -= 0.02;
+//     }
+//   }
 
-  endTouchX = startTouchX;
-  endTouchY = startTouchY;
-});
+//   endTouchX = startTouchX;
+//   endTouchY = startTouchY;
+// });
 
-document.addEventListener('gestureend', function(e) {
-  if (e.scale < 1.0) {
-      // User moved fingers closer together
-      console.log("Pinch");
-  } else if (e.scale > 1.0) {
-      // User moved fingers further apart
-      console.log("Pinch out");
-  }
-}, false);
+// document.addEventListener('gestureend', function(e) {
+//   if (e.scale < 1.0) {
+//       // User moved fingers closer together
+//       console.log("Pinch")
+//   } else if (e.scale > 1.0) {
+//       // User moved fingers further apart
+//       console.log("Pinch out")
+//   }
+// }, false);
 
 var stage = document.getElementById('scene-container');
 var hamManager = new Hammer(stage);
 //console.log(hamManager.get("pinch").set({enable: true}));
 //hamManager.get("pinchin").set({ enable: true });
-hamManager.on("pinchin", handleScale);
+hamManager.on("pan", handleScale);
 
 function handleScale(){
   alert("Pinched In");
