@@ -22,13 +22,10 @@ import {
 import {
   checkXRCapacity
 } from "./utils/checkXRCapacity.js";
-import {
-  OrbitControls
-} from "three/examples/jsm/controls/OrbitControls.js";
 
 const playBtn = document.getElementById("playBtn");
 
-let camera, scene, renderer, controls;
+let camera, scene, renderer;
 let planeMarker, humanEverCoastModel;
 let playerApi;
 
@@ -65,16 +62,6 @@ function init() {
 
   // Event Listeners
   window.addEventListener('resize', onWindowResize);
-
-  initOrbitControls();
-}
-
-function initOrbitControls(){
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.2;
-  controls.target.set(0, 1, 0);
-  controls.update();
 }
 
 function initBaseScene() {
@@ -167,8 +154,6 @@ function render(timestamp, frame) {
   }
 
   renderer.render(scene, camera);
-  controls.update();
-  
   updatePlayer();
 }
 
@@ -193,65 +178,36 @@ function updatePlayer() {
 //   });
 // }
 
-// let startTouchX = 0, startTouchY = 0;
-// let endTouchX = 0, endTouchY = 0;
-// renderer.domElement.addEventListener('touchmove', function(e){
-//   e.preventDefault();
 
-//   startTouchX = e.changedTouches[0].clientX;
-//   startTouchY = e.changedTouches[0].clientY;
-  
-//   if(startTouchX > endTouchX){
-//     //"Rotate Left"
-//     if(humanEverCoastModel.visible){
-//       humanEverCoastModel.rotation.y += 0.02;
-//     }
-//   }
-//   else{
-//     //"Rotate Right"
-//     if(humanEverCoastModel.visible){
-//       humanEverCoastModel.rotation.y -= 0.02;
-//     }
-//   }
 
-//   // Scale Effect
-//   if(startTouchY > endTouchY){
-//     //"Rotate Left"
-//     if(humanEverCoastModel.visible){
-//       //humanEverCoastModel.rotation.y += 0.02;
-//       console.log("Rolling Up");
-//     }
-//   }
-//   else{
-//     //"Rotate Right"
-//     if(humanEverCoastModel.visible){
-//       console.log("Rolling Down");
-//       //humanEverCoastModel.rotation.y -= 0.02;
-//     }
-//   }
+var stage = document.getElementById('scene-container');
+var hamManager = new Hammer(stage);
+hamManager.on("panleft", moveModelLeft);
+hamManager.on("panRight", moveModelRight);
+hamManager.on("panup", scaleModelBig);
+hamManager.on("pandown", scaleModelSmall);
 
-//   endTouchX = startTouchX;
-//   endTouchY = startTouchY;
-// });
 
-// document.addEventListener('gestureend', function(e) {
-//   if (e.scale < 1.0) {
-//       // User moved fingers closer together
-//       console.log("Pinch")
-//   } else if (e.scale > 1.0) {
-//       // User moved fingers further apart
-//       console.log("Pinch out")
-//   }
-// }, false);
 
-// var stage = document.getElementById('scene-container');
-// var hamManager = new Hammer(stage);
-// //console.log(hamManager.get("pinch").set({enable: true}));
-// //hamManager.get("pinchin").set({ enable: true });
-// hamManager.on("pan", handleScale);
-
-// function handleScale(){
-//   alert("Pinched In");
-// }
+function moveModelLeft(){
+  humanEverCoastModel.rotation.y += 0.02;
+}
+function moveModelRight(){
+  humanEverCoastModel.rotation.y -= 0.02;
+}
+function scaleModelBig(){
+  if(humanEverCoastModel.scale.x < 2){
+    humanEverCoastModel.scale.x = humanEverCoastModel.scale.x + 0.1;
+    humanEverCoastModel.scale.y = humanEverCoastModel.scale.y + 0.1;
+    humanEverCoastModel.scale.z = humanEverCoastModel.scale.z + 0.1;
+  }
+}
+function scaleModelSmall(){
+  if(humanEverCoastModel.scale.x > 0.2){
+    humanEverCoastModel.scale.x = humanEverCoastModel.scale.x - 0.1;
+    humanEverCoastModel.scale.y = humanEverCoastModel.scale.y - 0.1;
+    humanEverCoastModel.scale.z = humanEverCoastModel.scale.z - 0.1;
+  }
+}
 
 
