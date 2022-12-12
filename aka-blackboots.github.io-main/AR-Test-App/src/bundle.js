@@ -29562,8 +29562,7 @@ animate();
 function init() {
   checkXRCapacity();
 
-  const container = document.createElement('div');
-  document.body.appendChild(container);
+  const container = document.getElementById('scene-container');
 
   scene = new Scene();
   camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
@@ -29630,7 +29629,7 @@ function createPlayerApi(scene) {
     console.log('evercoast mesh asset created');
     scene.add(asset);
     humanEverCoastModel = asset;
-    humanEverCoastModel.visible = false;
+    //humanEverCoastModel.visible = false;
     humanEverCoastModel.rotation.y = (Math.PI);
     humanEverCoastModel.scale.set(0.7,0.7,0.7);
   };
@@ -29705,14 +29704,15 @@ function updatePlayer() {
 //   });
 // }
 
-let startTouch = 0;
-let endTouch = 0;
+let startTouchX = 0, startTouchY = 0;
+let endTouchX = 0, endTouchY = 0;
 renderer.domElement.addEventListener('touchmove', function(e){
   e.preventDefault();
 
-  startTouch = e.changedTouches[0].clientX;
+  startTouchX = e.changedTouches[0].clientX;
+  startTouchY = e.changedTouches[0].clientY;
   
-  if(startTouch > endTouch){
+  if(startTouchX > endTouchX){
     //"Rotate Left"
     if(humanEverCoastModel.visible){
       humanEverCoastModel.rotation.y += 0.02;
@@ -29725,5 +29725,42 @@ renderer.domElement.addEventListener('touchmove', function(e){
     }
   }
 
-  endTouch = startTouch;
+  // Scale Effect
+  if(startTouchY > endTouchY){
+    //"Rotate Left"
+    if(humanEverCoastModel.visible){
+      //humanEverCoastModel.rotation.y += 0.02;
+      console.log("Rolling Up");
+    }
+  }
+  else {
+    //"Rotate Right"
+    if(humanEverCoastModel.visible){
+      console.log("Rolling Down");
+      //humanEverCoastModel.rotation.y -= 0.02;
+    }
+  }
+
+  endTouchX = startTouchX;
+  endTouchY = startTouchY;
 });
+
+document.addEventListener('gestureend', function(e) {
+  if (e.scale < 1.0) {
+      // User moved fingers closer together
+      console.log("Pinch");
+  } else if (e.scale > 1.0) {
+      // User moved fingers further apart
+      console.log("Pinch out");
+  }
+}, false);
+
+var stage = document.getElementById('scene-container');
+var hamManager = new Hammer(stage);
+//console.log(hamManager.get("pinch").set({enable: true}));
+//hamManager.get("pinchin").set({ enable: true });
+hamManager.on("pinchin", handleScale);
+
+function handleScale(){
+  alert("Pinched In");
+}

@@ -11,10 +11,12 @@
   "author": "Vishwajeet Mane",
   "license": "ISC",
   "dependencies": {
+    "hammerjs": "^2.0.8",
     "three": "^0.147.0"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.0.1",
+    "@types/hammerjs": "^2.0.41",
     "evercoast-player-api": "https://evercoast-streaming.s3.amazonaws.com/packages/evercoast-player-api/evercoast-player-api-1.5.29-rc.33.tgz",
     "evercoast-renderers": "https://evercoast-streaming.s3.amazonaws.com/packages/evercoast-renderers/evercoast-renderers-1.5.29-rc.33.tgz",
     "rollup": "^3.7.0"
