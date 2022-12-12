@@ -29716,6 +29716,7 @@ hamManager.on("pandown", scaleModelSmall);
 
 
 function moveModelLeft(){
+  alert("Model Move Left");
   humanEverCoastModel.rotation.y += 0.02;
 }
 function moveModelRight(){
