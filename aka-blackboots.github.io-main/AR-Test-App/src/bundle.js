@@ -29542,10 +29542,10 @@ async function checkXRCapacity(){
         );
 
         if(xrSupport){
-            alert("XR is supported");
+            document.getElementById("ar-message-span").innerText = "Your Device Supports JIO AR 🚀";
         }
         else {
-            alert("XR not supported");
+            document.getElementById("ar-message-span").innerHTML = "Your Device Doesn't Support JIO AR 😧⏳ <br/><br/> Use Chrome on Android";
         }
     }
 }
