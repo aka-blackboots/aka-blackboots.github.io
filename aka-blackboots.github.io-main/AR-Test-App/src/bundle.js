@@ -29630,7 +29630,7 @@ function createPlayerApi(scene) {
     console.log('evercoast mesh asset created');
     scene.add(asset);
     humanEverCoastModel = asset;
-    //humanEverCoastModel.visible = false;
+    humanEverCoastModel.visible = false;
     humanEverCoastModel.rotation.y = (Math.PI);
     humanEverCoastModel.scale.set(0.7,0.7,0.7);
   };
@@ -29709,7 +29709,7 @@ let startTouch = 0;
 let endTouch = 0;
 renderer.domElement.addEventListener('touchmove', function(e){
   e.preventDefault();
-  
+
   startTouch = e.changedTouches[0].clientX;
   
   if(startTouch > endTouch){
