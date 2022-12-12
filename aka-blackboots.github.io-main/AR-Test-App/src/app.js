@@ -6,9 +6,6 @@ import {
   WebGLRenderer
 } from "three";
 import {
-  OrbitControls
-} from "three/examples/jsm/controls/OrbitControls.js";
-import {
   ARButton
 } from "three/examples/jsm/webxr/ARButton.js";
 import {
@@ -28,7 +25,7 @@ import {
 
 const playBtn = document.getElementById("playBtn");
 
-let camera, scene, renderer, controls;
+let camera, scene, renderer;
 let planeMarker, humanEverCoastModel;
 let playerApi;
 
@@ -90,17 +87,8 @@ function initBaseScene() {
 
   //addModel();
   playerApi = createPlayerApi(scene);
-
-  initOrbitControls();
 }
 
-function initOrbitControls(){
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.2;
-  controls.target.set(0, 1, 0);
-  controls.update();
-}
 
 function createPlayerApi(scene) {
   console.log(scene);
@@ -128,10 +116,7 @@ function createPlayerApi(scene) {
     playerApiConfig
   );
 
-  //playBtn.disabled = true;
-
   playerApi.open('https://streaming.evercoast.com/Verizon/NEWTEST.BEN.ec.take.005/3167/NEWTEST.BEN.ec.take.005.ecm');
-
   playerApi.enableLooping(true);
 
   return playerApi;
@@ -170,7 +155,6 @@ function render(timestamp, frame) {
   }
 
   renderer.render(scene, camera);
-  controls.update();
   updatePlayer();
 }
 
@@ -178,9 +162,6 @@ function updatePlayer() {
   playerApi.beginRenderFrame();
   playerApi.update();
   if (playerApi.render()) {
-    // if (playBtn.disabled) {
-    //   playBtn.disabled = false;
-    // }
   }
   playerApi.endRenderFrame();
 }
@@ -197,3 +178,24 @@ function updatePlayer() {
 //     scene.add(humanEverCoastModel);
 //   });
 // }
+
+let startTouch = 0;
+let endTouch = 0;
+renderer.domElement.addEventListener('touchmove', function(e){
+  startTouch = e.changedTouches[0].clientX;
+  
+  if(startTouch > endTouch){
+    //"Rotate Left"
+    if(humanEverCoastModel.visible){
+      humanEverCoastModel.rotation.y += 0.02;
+    }
+  }
+  else{
+    //"Rotate Right"
+    if(humanEverCoastModel.visible){
+      humanEverCoastModel.rotation.y -= 0.02;
+    }
+  }
+
+  endTouch = startTouch;
+});
