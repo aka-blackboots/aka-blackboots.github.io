@@ -29631,6 +29631,7 @@ function createPlayerApi(scene) {
     humanEverCoastModel = asset;
     humanEverCoastModel.visible = false;
     humanEverCoastModel.rotation.y = (Math.PI);
+    humanEverCoastModel.scale.set(0.7,0.7,0.7);
   };
   playerApiConfig.renderSystem = renderSystem;
 
