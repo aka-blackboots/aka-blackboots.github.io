@@ -1,19 +1,7 @@
 import {
-  AmbientLight,
-  AxesHelper,
-  BoxGeometry,
   DirectionalLight,
-  DoubleSide,
-  FrontSide,
-  GridHelper,
   HemisphereLight,
-  Mesh,
-  MeshBasicMaterial,
-  MeshPhongMaterial,
-  MeshStandardMaterial,
   PerspectiveCamera,
-  PlaneGeometry,
-  RingGeometry,
   Scene,
   WebGLRenderer
 } from "three";
@@ -23,10 +11,6 @@ import {
 import {
   ARButton
 } from "three/examples/jsm/webxr/ARButton.js";
-import {
-  CSS2DRenderer,
-  CSS2DObject
-} from "three/examples/jsm/renderers/CSS2DRenderer.js";
 import {
   handleXRHitTest
 } from "./utils/hitTest.js";
@@ -44,7 +28,7 @@ import {
 
 const playBtn = document.getElementById("playBtn");
 
-let camera, scene, renderer;
+let camera, scene, renderer, controls;
 let planeMarker, humanEverCoastModel;
 let playerApi;
 
@@ -106,6 +90,16 @@ function initBaseScene() {
 
   //addModel();
   playerApi = createPlayerApi(scene);
+
+  initOrbitControls();
+}
+
+function initOrbitControls(){
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.2;
+  controls.target.set(0, 1, 0);
+  controls.update();
 }
 
 function createPlayerApi(scene) {
@@ -176,6 +170,7 @@ function render(timestamp, frame) {
   }
 
   renderer.render(scene, camera);
+  controls.update();
   updatePlayer();
 }
 
