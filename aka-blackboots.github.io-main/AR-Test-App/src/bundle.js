@@ -29550,7 +29550,7 @@ async function checkXRCapacity(){
     }
 }
 
-const playBtn = document.getElementById("playBtn");
+document.getElementById("playBtn");
 
 let camera, scene, renderer;
 let planeMarker, humanEverCoastModel;
@@ -29641,12 +29641,12 @@ function createPlayerApi(scene) {
     playerApiConfig
   );
 
-  playBtn.disabled = true;
+  //playBtn.disabled = true;
 
   playerApi.open('https://streaming.evercoast.com/Verizon/NEWTEST.BEN.ec.take.005/3167/NEWTEST.BEN.ec.take.005.ecm');
 
   playerApi.enableLooping(true);
-  playerApi.play();
+  // playerApi.play();
 
   // playBtn.addEventListener('click', () => {
   //   if (playBtn.innerText == 'Play') {
@@ -29656,13 +29656,13 @@ function createPlayerApi(scene) {
   //   }
   // })
 
-  playerApi.onPaused.add(() => {
-    playBtn.innerText = 'Play';
-  });
+  // playerApi.onPaused.add(() => {
+  //   playBtn.innerText = 'Play';
+  // })
 
-  playerApi.onResumed.add(() => {
-    playBtn.innerText = 'Pause';
-  });
+  // playerApi.onResumed.add(() => {
+  //   playBtn.innerText = 'Pause';
+  // })
   return playerApi;
 }
 
@@ -29695,22 +29695,18 @@ function render(timestamp, frame) {
       planeMarker.visible = false;
     });
     
-    playerApi.play();
+    //playerApi.play();
   }
 
   renderer.render(scene, camera);
-
+  playerApi.play();
   updatePlayer();
 }
 
 function updatePlayer() {
   playerApi.beginRenderFrame();
   playerApi.update();
-  if (playerApi.render()) {
-    if (playBtn.disabled) {
-      playBtn.disabled = false;
-    }
-  }
+  if (playerApi.render()) ;
   playerApi.endRenderFrame();
 }
 
