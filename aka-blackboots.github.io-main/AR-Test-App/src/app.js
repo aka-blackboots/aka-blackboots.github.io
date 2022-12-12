@@ -44,7 +44,7 @@ import {
 
 const playBtn = document.getElementById("playBtn");
 
-let camera, scene, renderer, labelRenderer;
+let camera, scene, renderer;
 let planeMarker, humanEverCoastModel;
 let playerApi;
 
@@ -106,20 +106,6 @@ function initBaseScene() {
 
   //addModel();
   playerApi = createPlayerApi(scene);
-
-
-  const earthDiv = document.createElement('div');
-  earthDiv.className = 'label';
-  earthDiv.textContent = 'Earth';
-  const earthLabel = new CSS2DObject(earthDiv);
-  earthLabel.position.set(0, 0, 0);
-  scene.add(earthLabel);
-
-  labelRenderer = new CSS2DRenderer();
-  labelRenderer.setSize(window.innerWidth, window.innerHeight);
-  labelRenderer.domElement.style.position = 'absolute';
-  labelRenderer.domElement.style.top = '0px';
-  document.body.appendChild(labelRenderer.domElement);
 }
 
 function createPlayerApi(scene) {
@@ -137,6 +123,7 @@ function createPlayerApi(scene) {
     humanEverCoastModel = asset;
     //humanEverCoastModel.visible = false;
     humanEverCoastModel.rotation.y = (Math.PI);
+    humanEverCoastModel.scale.set(0.7,0.7,0.7);
   }
   playerApiConfig.renderSystem = renderSystem;
 
@@ -147,28 +134,11 @@ function createPlayerApi(scene) {
     playerApiConfig
   );
 
-  playBtn.disabled = true;
-
+  
   playerApi.open('https://streaming.evercoast.com/Verizon/NEWTEST.BEN.ec.take.005/3167/NEWTEST.BEN.ec.take.005.ecm');
 
   playerApi.enableLooping(true);
-  playerApi.play();
-
-  // playBtn.addEventListener('click', () => {
-  //   if (playBtn.innerText == 'Play') {
-  //     playerApi.play();
-  //   } else {
-  //     playerApi.pause();
-  //   }
-  // })
-
-  playerApi.onPaused.add(() => {
-    playBtn.innerText = 'Play';
-  })
-
-  playerApi.onResumed.add(() => {
-    playBtn.innerText = 'Pause';
-  })
+  
   return playerApi;
 }
 
@@ -184,8 +154,6 @@ function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-
-  labelRenderer.setSize( window.innerWidth, window.innerHeight );
 }
 
 function animate() {
@@ -207,18 +175,13 @@ function render(timestamp, frame) {
   }
 
   renderer.render(scene, camera);
-  labelRenderer.render( scene, camera );
+
   updatePlayer();
 }
 
 function updatePlayer() {
   playerApi.beginRenderFrame();
   playerApi.update();
-  if (playerApi.render()) {
-    if (playBtn.disabled) {
-      playBtn.disabled = false;
-    }
-  }
   playerApi.endRenderFrame();
 }
 
