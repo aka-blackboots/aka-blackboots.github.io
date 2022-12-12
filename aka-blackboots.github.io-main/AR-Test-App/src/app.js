@@ -26,30 +26,26 @@ import {
 import {
   handleXRHitTest
 } from "./utils/hitTest.js";
-import {
-  GLTFLoader
-} from "three/examples/jsm/loaders/GLTFLoader.js";
-import {
-  DRACOLoader
-} from "three/examples/jsm/loaders/DRACOLoader.js";
 
 // External Packages
 import EvercoastPlayerApi from 'evercoast-player-api';
 import { EvercoastPlayerApiConfig } from 'evercoast-player-api'
 import EvercoastThreeJSRenderSystem from 'evercoast-renderers/lib/evercoast-threejs-rendersystem'
+import { createPlaneMarker } from "./utils/planeMarker.js";
+import { checkXRCapacity } from "./utils/checkXRCapacity.js";
 
 const playBtn = document.getElementById("playBtn");
 
 let camera, scene, renderer;
-let controller;
-let box, planeMarker, humanEverCoastModel;
+let planeMarker, humanEverCoastModel;
 let playerApi;
 
 init();
 animate();
 
-
 function init() {
+  checkXRCapacity();
+
   const container = document.createElement('div');
   document.body.appendChild(container);
 
@@ -73,16 +69,7 @@ function init() {
     requiredFeatures: ["hit-test"]
   }, ));
 
-  // Add Assets
-  const boxGeometry = new BoxGeometry(1, 1, 1);
-  const boxMaterial = new MeshBasicMaterial({
-    color: 0xff0000
-  });
-  box = new Mesh(boxGeometry, boxMaterial);
-  box.position.z = -3;
-  scene.add(box);
-  // End of Assets
-
+  // Creating Base Scene
   initBaseScene();
 
   // Pass the renderer to the createScene-funtion.
@@ -90,6 +77,7 @@ function init() {
   // Display a welcome message to the user.
   //displayIntroductionMessage();
 
+  // Event Listeners
   window.addEventListener('resize', onWindowResize);
 }
 
@@ -111,26 +99,10 @@ function initBaseScene() {
   // Controller 
   const controller = renderer.xr.getController(0);
   scene.add(controller);
-
   controller.addEventListener("select", changeModelLoc);
 
   //addModel();
   playerApi = createPlayerApi(scene);
-}
-
-function addModel() {
-  const gltfLoader = new GLTFLoader();
-
-  const dracoLoader = new DRACOLoader();
-  dracoLoader.setDecoderPath('/examples/js/libs/draco/');
-  gltfLoader.setDRACOLoader(dracoLoader);
-
-  gltfLoader.load("https://joyful-basbousa-d571da.netlify.app/aka-blackboots.github.io-main/ar-test-app/models/koala2.glb", (gltf) => {
-    humanEverCoastModel = gltf.scene.children[0];
-    console.log(humanEverCoastModel);
-    scene.add(humanEverCoastModel);
-  });
-
 }
 
 function createPlayerApi(scene){
@@ -138,7 +110,6 @@ function createPlayerApi(scene){
 
   const playerApiConfig = new EvercoastPlayerApiConfig();
   console.log(playerApiConfig)
-  //const root = location.origin + '/';
   const root = "https://joyful-basbousa-d571da.netlify.app/aka-blackboots.github.io-main/ar-test-app//src/evercoast-helpers/"
 
   playerApiConfig.root = root;
@@ -151,7 +122,7 @@ function createPlayerApi(scene){
   }
   playerApiConfig.renderSystem = renderSystem;
 
-  playerApiConfig.maxFramerate = 15; //isMobileDevice ? 15 : 30;
+  playerApiConfig.maxFramerate = 15;
 
   const playerApi = new EvercoastPlayerApi(
       renderer.getContext(),
@@ -184,17 +155,12 @@ function createPlayerApi(scene){
 }
 
 function changeModelLoc() {
-  //alert("Select Tap");
   if (planeMarker.visible) {
-  
     humanEverCoastModel.position.setFromMatrixPosition(planeMarker.matrix);
-    // Rotate the model randomly to give a bit of variation to the scene.
-    humanEverCoastModel.rotation.y = Math.random() * (Math.PI * 2);
+    humanEverCoastModel.rotation.y = (Math.PI * 2);
     humanEverCoastModel.visible = true;
   }
 }
-
-
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -216,13 +182,8 @@ function render(timestamp, frame) {
     }, () => {
       planeMarker.visible = false;
     })
-
-    box.rotation.x += 0.04;
-
-    
   }
   renderer.render(scene, camera);
-
   updatePlayer();
 }
 
@@ -237,17 +198,15 @@ function updatePlayer(){
   playerApi.endRenderFrame();
 }
 
+// function addModel() {
+//   const gltfLoader = new GLTFLoader();
 
-/* Shift To Different File, Vish - Make it little nice with interactive UI */
-function createPlaneMarker() {
-  const planeMarkerMaterial = new MeshBasicMaterial({
-    color: 0xffffff
-  });
+//   const dracoLoader = new DRACOLoader();
+//   dracoLoader.setDecoderPath('/examples/js/libs/draco/');
+//   gltfLoader.setDRACOLoader(dracoLoader);
 
-  const planeMarkerGeometry = new RingGeometry(0.14, 0.15, 16).rotateX(
-    -Math.PI / 2,
-  );
-  const planeMarker = new Mesh(planeMarkerGeometry, planeMarkerMaterial);
-  planeMarker.matrixAutoUpdate = false;
-  return planeMarker;
-};
+//   gltfLoader.load("https://joyful-basbousa-d571da.netlify.app/aka-blackboots.github.io-main/ar-test-app/models/koala2.glb", (gltf) => {
+//     humanEverCoastModel = gltf.scene.children[0];
+//     scene.add(humanEverCoastModel);
+//   });
+// }
