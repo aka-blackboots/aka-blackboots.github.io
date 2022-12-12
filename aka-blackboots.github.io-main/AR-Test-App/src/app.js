@@ -24,19 +24,27 @@ import {
   ARButton
 } from "three/examples/jsm/webxr/ARButton.js";
 import {
+  CSS2DRenderer,
+  CSS2DObject
+} from "three/examples/jsm/renderers/CSS2DRenderer.js";
+import {
   handleXRHitTest
 } from "./utils/hitTest.js";
-
-// External Packages
 import EvercoastPlayerApi from 'evercoast-player-api';
-import { EvercoastPlayerApiConfig } from 'evercoast-player-api'
+import {
+  EvercoastPlayerApiConfig
+} from 'evercoast-player-api'
 import EvercoastThreeJSRenderSystem from 'evercoast-renderers/lib/evercoast-threejs-rendersystem'
-import { createPlaneMarker } from "./utils/planeMarker.js";
-import { checkXRCapacity } from "./utils/checkXRCapacity.js";
+import {
+  createPlaneMarker
+} from "./utils/planeMarker.js";
+import {
+  checkXRCapacity
+} from "./utils/checkXRCapacity.js";
 
 const playBtn = document.getElementById("playBtn");
 
-let camera, scene, renderer;
+let camera, scene, renderer, labelRenderer;
 let planeMarker, humanEverCoastModel;
 let playerApi;
 
@@ -72,11 +80,6 @@ function init() {
   // Creating Base Scene
   initBaseScene();
 
-  // Pass the renderer to the createScene-funtion.
-  //createScene(renderer);
-  // Display a welcome message to the user.
-  //displayIntroductionMessage();
-
   // Event Listeners
   window.addEventListener('resize', onWindowResize);
 }
@@ -103,9 +106,23 @@ function initBaseScene() {
 
   //addModel();
   playerApi = createPlayerApi(scene);
+
+
+  const earthDiv = document.createElement('div');
+  earthDiv.className = 'label';
+  earthDiv.textContent = 'Earth';
+  const earthLabel = new CSS2DObject(earthDiv);
+  earthLabel.position.set(0, 0, 0);
+  scene.add(earthLabel);
+
+  labelRenderer = new CSS2DRenderer();
+  labelRenderer.setSize(window.innerWidth, window.innerHeight);
+  labelRenderer.domElement.style.position = 'absolute';
+  labelRenderer.domElement.style.top = '0px';
+  document.body.appendChild(labelRenderer.domElement);
 }
 
-function createPlayerApi(scene){
+function createPlayerApi(scene) {
   console.log(scene);
 
   const playerApiConfig = new EvercoastPlayerApiConfig();
@@ -115,18 +132,18 @@ function createPlayerApi(scene){
   playerApiConfig.root = root;
   const renderSystem = new EvercoastThreeJSRenderSystem(renderer);
   renderSystem.onAssetCreated = (asset) => {
-      console.log('evercoast mesh asset created');
-      scene.add(asset);
-      humanEverCoastModel = asset;
-      humanEverCoastModel.visible = false;
+    console.log('evercoast mesh asset created');
+    scene.add(asset);
+    humanEverCoastModel = asset;
+    humanEverCoastModel.visible = false;
   }
   playerApiConfig.renderSystem = renderSystem;
 
   playerApiConfig.maxFramerate = 15;
 
   const playerApi = new EvercoastPlayerApi(
-      renderer.getContext(),
-      playerApiConfig
+    renderer.getContext(),
+    playerApiConfig
   );
 
   playBtn.disabled = true;
@@ -136,19 +153,19 @@ function createPlayerApi(scene){
   playerApi.enableLooping(true);
 
   playBtn.addEventListener('click', () => {
-      if(playBtn.innerText == 'Play') {
-          playerApi.play();
-      } else {
-          playerApi.pause();
-      }
+    if (playBtn.innerText == 'Play') {
+      playerApi.play();
+    } else {
+      playerApi.pause();
+    }
   })
 
   playerApi.onPaused.add(() => {
-      playBtn.innerText = 'Play';
+    playBtn.innerText = 'Play';
   })
 
   playerApi.onResumed.add(() => {
-      playBtn.innerText = 'Pause';
+    playBtn.innerText = 'Pause';
   })
 
   return playerApi;
@@ -166,6 +183,8 @@ function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+
+  labelRenderer.setSize( window.innerWidth, window.innerHeight );
 }
 
 function animate() {
@@ -184,16 +203,17 @@ function render(timestamp, frame) {
     })
   }
   renderer.render(scene, camera);
+  labelRenderer.render( scene, camera );
   updatePlayer();
 }
 
-function updatePlayer(){
+function updatePlayer() {
   playerApi.beginRenderFrame();
   playerApi.update();
-  if(playerApi.render()) {
-      if(playBtn.disabled) {
-          playBtn.disabled = false;
-      }
+  if (playerApi.render()) {
+    if (playBtn.disabled) {
+      playBtn.disabled = false;
+    }
   }
   playerApi.endRenderFrame();
 }
