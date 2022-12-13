@@ -36,7 +36,7 @@ init();
 animate();
 
 function init() {
-  //checkXRCapacity();
+  checkXRCapacity();
 
   const container = document.getElementById('scene-container');
 
@@ -68,14 +68,14 @@ function init() {
   gestures = new XRGestures(renderer);
   console.log(gestures);
   gestures.addEventListener('tap', (ev) => {
-    alert(ev.type+"::Tap");
+    //alert(ev.type+"::Tap");
     changeModelLoc();
   });
   gestures.addEventListener('swipe', (ev) => {
     console.log(`swipe ${ev.direction}`);
     alert("Swipe");
   });
-  
+
   gestures.addEventListener('pinch', (ev) => {
     //scaleModel(ev);
     if (ev.initialise !== undefined) {
@@ -125,7 +125,7 @@ function createPlayerApi(scene) {
     console.log('evercoast mesh asset created');
     scene.add(asset);
     humanEverCoastModel = asset;
-    //humanEverCoastModel.visible = false;
+    humanEverCoastModel.visible = false;
     humanEverCoastModel.rotation.y = (Math.PI);
     humanEverCoastModel.scale.set(0.7, 0.7, 0.7);
   }

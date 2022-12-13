@@ -29608,6 +29608,21 @@ function createPlaneMarker() {
     return planeMarker;
 }
 
+async function checkXRCapacity(){
+    if(window.navigator.xr){
+        const xrSupport = await window.navigator.xr.isSessionSupported(
+            "immersive-ar",
+        );
+
+        if(xrSupport){
+            document.getElementById("ar-message-span").innerHTML = "Your Device Supports JIO AR 🚀 <br/><br/>Tap to Place Model, Swipe to Rotate";
+        }
+        else {
+            document.getElementById("ar-message-span").innerHTML = "Your Device Doesn't Support JIO AR 😧⏳ <br/><br/> Use Chrome on Android";
+        }
+    }
+}
+
 class XRGestures extends EventDispatcher{
     constructor( renderer ){
         super();
@@ -29827,7 +29842,7 @@ init();
 animate();
 
 function init() {
-  //checkXRCapacity();
+  checkXRCapacity();
 
   const container = document.getElementById('scene-container');
 
@@ -29859,14 +29874,14 @@ function init() {
   gestures = new XRGestures(renderer);
   console.log(gestures);
   gestures.addEventListener('tap', (ev) => {
-    alert(ev.type+"::Tap");
+    //alert(ev.type+"::Tap");
     changeModelLoc();
   });
   gestures.addEventListener('swipe', (ev) => {
     console.log(`swipe ${ev.direction}`);
     alert("Swipe");
   });
-  
+
   gestures.addEventListener('pinch', (ev) => {
     //scaleModel(ev);
     if (ev.initialise !== undefined) {
@@ -29916,7 +29931,7 @@ function createPlayerApi(scene) {
     console.log('evercoast mesh asset created');
     scene.add(asset);
     humanEverCoastModel = asset;
-    //humanEverCoastModel.visible = false;
+    humanEverCoastModel.visible = false;
     humanEverCoastModel.rotation.y = (Math.PI);
     humanEverCoastModel.scale.set(0.7, 0.7, 0.7);
   };
