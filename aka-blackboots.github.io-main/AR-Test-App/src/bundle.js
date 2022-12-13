@@ -29858,8 +29858,8 @@ function init() {
   window.addEventListener('resize', onWindowResize);
   gestures = new XRGestures(renderer);
   console.log(gestures);
-  gestures.addEventListener('tap', (ev)=>{
-    alert("Tap");
+  gestures.addEventListener("tap", (ev)=>{
+    alert(ev.type+"::Tap");
   });
 }
 
@@ -29879,9 +29879,9 @@ function initBaseScene() {
   planeMarker.visible = false;
 
   // Controller 
-  const controller = renderer.xr.getController(0);
-  scene.add(controller);
-  controller.addEventListener("select", changeModelLoc);
+  // const controller = renderer.xr.getController(0);
+  // scene.add(controller);
+  // controller.addEventListener("select", changeModelLoc);
 
   //addModel();
   playerApi = createPlayerApi(scene);
@@ -29920,14 +29920,6 @@ function createPlayerApi(scene) {
   return playerApi;
 }
 
-function changeModelLoc() {
-  if (planeMarker.visible) {
-    humanEverCoastModel.position.setFromMatrixPosition(planeMarker.matrix);
-    humanEverCoastModel.rotation.y = (Math.PI/2);
-    humanEverCoastModel.visible = true;
-  }
-}
-
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -29953,6 +29945,7 @@ function render(timestamp, frame) {
   }
 
   renderer.render(scene, camera);
+  gestures.update();
   updatePlayer();
 }
 
