@@ -29883,6 +29883,7 @@ function init() {
   });
 
   gestures.addEventListener('pinch', (ev) => {
+    ev.preventDefault();
     //scaleModel(ev);
     if (ev.initialise !== undefined) {
       console.log('pinch: initialise');
