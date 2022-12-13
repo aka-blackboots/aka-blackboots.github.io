@@ -29873,6 +29873,9 @@ function init() {
   window.addEventListener('resize', onWindowResize);
   gestures = new XRGestures(renderer);
   console.log(gestures);
+  gestures.addEventListener('tap', (ev)=>{
+    alert("Tap");
+  });
 }
 
 function initBaseScene() {
@@ -29987,6 +29990,3 @@ function updatePlayer() {
 //     scene.add(humanEverCoastModel);
 //   });
 // }
-gestures.addEventListener('tap', (ev)=>{
-  alert("Tap");
-});
