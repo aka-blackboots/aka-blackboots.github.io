@@ -67,11 +67,11 @@ function init() {
   window.addEventListener('resize', onWindowResize);
   gestures = new XRGestures(renderer);
   console.log(gestures);
-  gestures.addEventListener("tap", (ev) => {
+  gestures.addEventListener('tap', (ev) => {
     //alert(ev.type+"::Tap");
     changeModelLoc();
   })
-  gestures.addEventListener("pinch", (ev) => {
+  gestures.addEventListener('pinch', (ev) => {
     //scaleModel(ev);
     if (ev.initialise !== undefined) {
       console.log('pinch: initialise');
@@ -80,6 +80,11 @@ function init() {
       alert("Pinch");
     }
   })
+
+  gestures.addEventListener('swipe', (ev) => {
+    console.log(`swipe ${ev.direction}`);
+    alert("Swipe");
+  });
 }
 
 function initBaseScene() {
