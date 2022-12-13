@@ -22,10 +22,13 @@ import {
 import {
   checkXRCapacity
 } from "./utils/checkXRCapacity.js";
+import {
+  XRGestures
+} from "./utils/XRGestures.js";
 
 const playBtn = document.getElementById("playBtn");
 
-let camera, scene, renderer;
+let camera, scene, renderer, gestures;
 let planeMarker, humanEverCoastModel;
 let playerApi;
 
@@ -62,6 +65,8 @@ function init() {
 
   // Event Listeners
   window.addEventListener('resize', onWindowResize);
+  gestures = new XRGestures(renderer);
+  console.log(gestures);
 }
 
 function initBaseScene() {
@@ -177,39 +182,10 @@ function updatePlayer() {
 //     scene.add(humanEverCoastModel);
 //   });
 // }
+gestures.addEventListener('tap', (ev)=>{
+  alert("Tap");
+})
 
 
-
-var stage = document.getElementById('scene-container');
-var hamManager = new Hammer(stage);
-hamManager.on("panleft", moveModelLeft);
-hamManager.on("panright", moveModelRight);
-hamManager.on("panup", scaleModelBig);
-hamManager.on("pandown", scaleModelSmall);
-
-
-
-function moveModelLeft(){
-  console.log("Model Move Left");
-  humanEverCoastModel.rotation.y += 0.02;
-}
-function moveModelRight(){
-  console.log("Model Move Right");
-  humanEverCoastModel.rotation.y -= 0.02;
-}
-function scaleModelBig(){
-  if(humanEverCoastModel.scale.x < 2){
-    humanEverCoastModel.scale.x = humanEverCoastModel.scale.x + 0.1;
-    humanEverCoastModel.scale.y = humanEverCoastModel.scale.y + 0.1;
-    humanEverCoastModel.scale.z = humanEverCoastModel.scale.z + 0.1;
-  }
-}
-function scaleModelSmall(){
-  if(humanEverCoastModel.scale.x > 0.2){
-    humanEverCoastModel.scale.x = humanEverCoastModel.scale.x - 0.1;
-    humanEverCoastModel.scale.y = humanEverCoastModel.scale.y - 0.1;
-    humanEverCoastModel.scale.z = humanEverCoastModel.scale.z - 0.1;
-  }
-}
 
 
