@@ -29861,6 +29861,9 @@ function init() {
   gestures.addEventListener("tap", (ev)=>{
     alert(ev.type+"::Tap");
   });
+  gestures.addEventListener("pinch", (ev)=>{
+    alert("Pinch");
+  });
 }
 
 function initBaseScene() {
