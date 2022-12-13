@@ -9,6 +9,7 @@ body {
     overflow: hidden;
     background-color: #e7f3ff;
     font-family: 'Roboto Slab', serif;
+    touch-action:none
 }
 
 #tesseract-xr-container {
