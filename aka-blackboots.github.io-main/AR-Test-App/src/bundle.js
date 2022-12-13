@@ -29859,7 +29859,8 @@ function init() {
   gestures = new XRGestures(renderer);
   console.log(gestures);
   gestures.addEventListener("tap", (ev)=>{
-    alert(ev.type+"::Tap");
+    //alert(ev.type+"::Tap");
+    changeModelLoc();
   });
   gestures.addEventListener("pinch", (ev)=>{
     alert("Pinch");
@@ -29921,6 +29922,14 @@ function createPlayerApi(scene) {
   playerApi.enableLooping(true);
 
   return playerApi;
+}
+
+function changeModelLoc() {
+  if (planeMarker.visible) {
+    humanEverCoastModel.position.setFromMatrixPosition(planeMarker.matrix);
+    humanEverCoastModel.rotation.y = (Math.PI/2);
+    humanEverCoastModel.visible = true;
+  }
 }
 
 function onWindowResize() {

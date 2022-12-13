@@ -68,7 +68,8 @@ function init() {
   gestures = new XRGestures(renderer);
   console.log(gestures);
   gestures.addEventListener("tap", (ev)=>{
-    alert(ev.type+"::Tap");
+    //alert(ev.type+"::Tap");
+    changeModelLoc();
   })
   gestures.addEventListener("pinch", (ev)=>{
     alert("Pinch");
