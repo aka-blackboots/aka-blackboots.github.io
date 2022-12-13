@@ -36,7 +36,7 @@ init();
 animate();
 
 function init() {
-  checkXRCapacity();
+  //checkXRCapacity();
 
   const container = document.getElementById('scene-container');
 
