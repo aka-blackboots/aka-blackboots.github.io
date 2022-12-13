@@ -71,20 +71,13 @@ function init() {
     //alert(ev.type+"::Tap");
     changeModelLoc();
   });
-  gestures.addEventListener('swipe', (ev) => {
-    console.log(`swipe ${ev.direction}`);
-    alert("Swipe");
-  });
+  // gestures.addEventListener('swipe', (ev) => {
+  //   console.log(`swipe ${ev.direction}`);
+  //   alert("Swipe");
+  // });
 
   gestures.addEventListener('pinch', (ev) => {
-    ev.preventDefault();
-    //scaleModel(ev);
-    if (ev.initialise !== undefined) {
-      console.log('pinch: initialise');
-    } else {
-      console.log(`pan x:${ev.delta.x.toFixed(3)}, y:${ev.delta.y.toFixed(3)}, x:${ev.delta.z.toFixed(3)}`);
-      alert("Pinch");
-    }
+    alert("Pinch")
   })
 }
 
