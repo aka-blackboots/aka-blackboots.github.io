@@ -152,7 +152,7 @@ function createPlayerApi(scene) {
         scaleVal = parseFloat(scaleVal - e.scale/10);
       }
 
-      alert(scaleVal);
+      //alert(scaleVal);
     });
   }
   playerApiConfig.renderSystem = renderSystem;
