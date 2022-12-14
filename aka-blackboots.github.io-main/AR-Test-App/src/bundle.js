@@ -29555,7 +29555,7 @@ document.getElementById("playBtn");
 let camera, scene, renderer;
 let planeMarker, humanEverCoastModel;
 let playerApi;
-let scaleVal;
+let scaleVal = 0.7;
 
 
 init();
@@ -29618,16 +29618,16 @@ function init() {
   manager.add(Pinch);
   manager.on('pinch', function(e){
     //alert('Pinch');
-    scaleVal = humanEverCoastModel.scale.x;
+    //scaleVal = humanEverCoastModel.scale.x;
     
-    alert(scaleVal);
+    alert(e.scale);
 
-    if(e.scale >= 1){
-      scaleVal = parseFloat(scaleVal + (1 - e.scale));
-    }
-    else {
-      scaleVal = parseFloat(scaleVal - e.scale);
-    }
+    // if(e.scale >= 1){
+    //   scaleVal = parseFloat(scaleVal + (1 - e.scale));
+    // }
+    // else{
+    //   scaleVal = parseFloat(scaleVal - e.scale);
+    // }
   });
 
   // control = new TransformControls( camera, renderer.domElement );
