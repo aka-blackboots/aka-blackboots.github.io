@@ -29611,11 +29611,11 @@ function init() {
 
   // Pinch
   // Create a recognizer
-  // var Pinch = new Hammer.Pinch();
-  // manager.add(Pinch);
-  // manager.on('pinch', function(e){
-  //   alert('Pinch');
-  // })
+  var Pinch = new Hammer.Pinch();
+  manager.add(Pinch);
+  manager.on('pinch', function(e){
+    alert('Pinch');
+  });
 
   // control = new TransformControls( camera, renderer.domElement );
 	// control.addEventListener( 'change', render );
