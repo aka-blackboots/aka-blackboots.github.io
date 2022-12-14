@@ -29555,7 +29555,8 @@ document.getElementById("playBtn");
 let camera, scene, renderer;
 let planeMarker, humanEverCoastModel;
 let playerApi;
-let scaleVal = 0.7;
+let scaleVal = 0.7,
+  manager;
 
 
 init();
@@ -29600,38 +29601,20 @@ function init() {
   // });
 
   document.getElementById('scene-container');
-  var manager = new Hammer.Manager(renderer.domElement);
+  manager = new Hammer.Manager(renderer.domElement);
   var Tap = new Hammer.Tap({
     taps: 1
   });
   // Add the recognizer to the manager
   manager.add(Tap);
   // Subscribe to the desired event
-  manager.on('tap', function(e) {
+  manager.on('tap', function (e) {
     //alert('Tap');
     changeModelLoc();
   });
 
-  // Pinch
-  // Create a recognizer
-  var Pinch = new Hammer.Pinch();
-  manager.add(Pinch);
-  manager.on('pinch', function(e){
-    //alert('Pinch');
-    //scaleVal = humanEverCoastModel.scale.x;
-    
-    alert(e.scale);
-
-    // if(e.scale >= 1){
-    //   scaleVal = parseFloat(scaleVal + (1 - e.scale));
-    // }
-    // else{
-    //   scaleVal = parseFloat(scaleVal - e.scale);
-    // }
-  });
-
   // control = new TransformControls( camera, renderer.domElement );
-	// control.addEventListener( 'change', render );
+  // control.addEventListener( 'change', render );
 
 }
 
@@ -29676,6 +29659,22 @@ function createPlayerApi(scene) {
     humanEverCoastModel.visible = false;
     humanEverCoastModel.rotation.y = (Math.PI);
     humanEverCoastModel.scale.set(0.7, 0.7, 0.7);
+
+    // Pinch
+    // Create a recognizer
+    var Pinch = new Hammer.Pinch();
+    manager.add(Pinch);
+    manager.on('pinch', function (e) {
+      //alert('Pinch');
+      scaleVal = humanEverCoastModel.scale.x;
+      if (e.scale >= 1) {
+        scaleVal = parseFloat(scaleVal + (1 - e.scale));
+      } else {
+        scaleVal = parseFloat(scaleVal - e.scale);
+      }
+
+      alert(scaleVal);
+    });
   };
   playerApiConfig.renderSystem = renderSystem;
 
@@ -29730,7 +29729,7 @@ function render(timestamp, frame) {
 }
 
 function updatePlayer() {
-  humanEverCoastModel.scale.set(scaleVal,scaleVal,scaleVal);
+  humanEverCoastModel.scale.set(scaleVal, scaleVal, scaleVal);
   playerApi.beginRenderFrame();
   playerApi.update();
   if (playerApi.render()) ;
