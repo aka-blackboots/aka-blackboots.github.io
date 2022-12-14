@@ -76,9 +76,21 @@ function init() {
   //   alert("Swipe");
   // });
 
-  gestures.addEventListener('pinch', (ev) => {
-    alert("Pinch")
-  })
+  let scale = 1;
+  window.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (e.ctrlKey) {
+      scale -= e.deltaY * 0.01;
+    } else {
+      posX -= e.deltaX * 2;
+      posY -= e.deltaY * 2;
+    }
+
+    if(scale < 1){
+      alert("Pinch");
+    }
+  });
+
 }
 
 function initBaseScene() {
