@@ -75,7 +75,7 @@ function init() {
   // gestures.addEventListener('pinch', (ev) => {
   //   alert("Pinch");
   // });
-  var square = document.getElementById('tesseract-xr-container');
+  var square = document.getElementById('scene-container');
   var manager = new Hammer.Manager(square);
   var Tap = new Hammer.Tap({
     taps: 1
