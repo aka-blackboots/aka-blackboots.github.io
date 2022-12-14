@@ -25,7 +25,6 @@ import {
 import {
   XRGestures
 } from "./utils/XRGestures.js";
-import PinchZoom from "pinch-zoom-js";
 
 const playBtn = document.getElementById("playBtn");
 
@@ -72,26 +71,10 @@ function init() {
     //alert(ev.type+"::Tap");
     changeModelLoc();
   });
-  // gestures.addEventListener('swipe', (ev) => {
-  //   console.log(`swipe ${ev.direction}`);
-  //   alert("Swipe");
-  // });
-
-  let scale = 1;
-  var myElement = document.getElementById("tesseract-xr-container");
-  var pz = new PinchZoom.default(myElement, {
-    draggableUnzoomed: false,
-    minZoom: 1,
-    onZoomStart: function (object, event) {
-      // Do something on zoom start
-      // You can use any Pinchzoom method by calling object.method()
-      alert(event);
-    },
-    onZoomEnd: function (object, event) {
-      // Do something on zoom end
-    }
-  })
-
+  gestures.addEventListener('pinch', (ev) => {
+    alert("Pinch");
+  });
+  gestures.multiTouch = true
 }
 
 function initBaseScene() {
