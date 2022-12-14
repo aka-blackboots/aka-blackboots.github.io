@@ -65,16 +65,35 @@ function init() {
 
   // Event Listeners
   window.addEventListener('resize', onWindowResize);
-  gestures = new XRGestures(renderer);
-  console.log(gestures);
-  gestures.addEventListener('tap', (ev) => {
-    //alert(ev.type+"::Tap");
-    changeModelLoc();
+
+  // gestures = new XRGestures(renderer);
+  // console.log(gestures);
+  // gestures.addEventListener('tap', (ev) => {
+  //   //alert(ev.type+"::Tap");
+  //   changeModelLoc();
+  // });
+  // gestures.addEventListener('pinch', (ev) => {
+  //   alert("Pinch");
+  // });
+  var square = document.getElementById('tesseract-xr-container');
+  var manager = new Hammer.Manager(square);
+  var Tap = new Hammer.Tap({
+    taps: 1
   });
-  gestures.addEventListener('pinch', (ev) => {
-    alert("Pinch");
+  // Add the recognizer to the manager
+  manager.add(Tap);
+  // Subscribe to the desired event
+  manager.on('tap', function(e) {
+    alert('Tap');
   });
-  gestures.multiTouch = true
+
+  // Pinch
+  // Create a recognizer
+  var Pinch = new Hammer.Pinch();
+  manager.add(Pinch);
+  manager.on('pinch', function(e){
+    alert('Pinch');
+  })
 }
 
 function initBaseScene() {
@@ -167,7 +186,7 @@ function render(timestamp, frame) {
   }
 
   renderer.render(scene, camera);
-  gestures.update();
+  //gestures.update();
   updatePlayer();
 }
 

@@ -11,6 +11,7 @@
   "author": "Vishwajeet Mane",
   "license": "ISC",
   "dependencies": {
+    "hammerjs": "^2.0.8",
     "three": "^0.147.0"
   },
   "devDependencies": {
