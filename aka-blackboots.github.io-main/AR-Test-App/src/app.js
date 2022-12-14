@@ -76,22 +76,31 @@ function init() {
 
   var square = document.getElementById('scene-container');
   var manager = new Hammer.Manager(renderer.domElement);
-  var Tap = new Hammer.Tap({
-    taps: 1
-  });
-  // Add the recognizer to the manager
-  manager.add(Tap);
-  // Subscribe to the desired event
-  manager.on('tap', function(e) {
-    alert('Tap');
-  });
+  // var Tap = new Hammer.Tap({
+  //   taps: 1
+  // });
+  // // Add the recognizer to the manager
+  // manager.add(Tap);
+  // // Subscribe to the desired event
+  // manager.on('tap', function(e) {
+  //   alert('Tap');
+  // });
 
   // Pinch
   // Create a recognizer
   var Pinch = new Hammer.Pinch();
   manager.add(Pinch);
   manager.on('pinch', function(e){
-    alert('Pinch');
+    //alert('Pinch');
+    const val = humanEverCoastModel.scale.x;
+    if(e.scale > 1){
+      val = val + (1 - e.scale);
+    }
+    else{
+      val = val - e.scale;
+    }
+    
+    humanEverCoastModel.scale.set(val,val,val);
   })
 
   // control = new TransformControls( camera, renderer.domElement );
@@ -137,7 +146,7 @@ function createPlayerApi(scene) {
     console.log('evercoast mesh asset created');
     scene.add(asset);
     humanEverCoastModel = asset;
-    humanEverCoastModel.visible = false;
+    //humanEverCoastModel.visible = false;
     humanEverCoastModel.rotation.y = (Math.PI);
     humanEverCoastModel.scale.set(0.7, 0.7, 0.7);
   }
