@@ -29596,11 +29596,9 @@ function init() {
   //   //alert(ev.type+"::Tap");
   //   changeModelLoc();
   // });
-  // gestures.addEventListener('pinch', (ev) => {
-  //   alert("Pinch");
-  // });
-  var square = document.getElementById('scene-container');
-  var manager = new Hammer.Manager(square);
+
+  document.getElementById('scene-container');
+  var manager = new Hammer.Manager(renderer.domElement);
   var Tap = new Hammer.Tap({
     taps: 1
   });
@@ -29613,11 +29611,15 @@ function init() {
 
   // Pinch
   // Create a recognizer
-  var Pinch = new Hammer.Pinch();
-  manager.add(Pinch);
-  manager.on('pinch', function(e){
-    alert('Pinch');
-  });
+  // var Pinch = new Hammer.Pinch();
+  // manager.add(Pinch);
+  // manager.on('pinch', function(e){
+  //   alert('Pinch');
+  // })
+
+  // control = new TransformControls( camera, renderer.domElement );
+	// control.addEventListener( 'change', render );
+
 }
 
 function initBaseScene() {
