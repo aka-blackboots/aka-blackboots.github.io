@@ -29599,15 +29599,16 @@ function init() {
 
   document.getElementById('scene-container');
   var manager = new Hammer.Manager(renderer.domElement);
-  // var Tap = new Hammer.Tap({
-  //   taps: 1
-  // });
-  // // Add the recognizer to the manager
-  // manager.add(Tap);
-  // // Subscribe to the desired event
-  // manager.on('tap', function(e) {
-  //   alert('Tap');
-  // });
+  var Tap = new Hammer.Tap({
+    taps: 1
+  });
+  // Add the recognizer to the manager
+  manager.add(Tap);
+  // Subscribe to the desired event
+  manager.on('tap', function(e) {
+    //alert('Tap');
+    changeModelLoc();
+  });
 
   // Pinch
   // Create a recognizer
@@ -29616,7 +29617,7 @@ function init() {
   manager.on('pinch', function(e){
     //alert('Pinch');
     const val = humanEverCoastModel.scale.x;
-    alert(val);
+    //alert(val);
     if(e.scale > 1){
       val = val + (1 - e.scale);
     }
@@ -29687,6 +29688,14 @@ function createPlayerApi(scene) {
   playerApi.enableLooping(true);
 
   return playerApi;
+}
+
+function changeModelLoc() {
+  if (planeMarker.visible) {
+    humanEverCoastModel.position.setFromMatrixPosition(planeMarker.matrix);
+    humanEverCoastModel.rotation.y = (Math.PI / 2);
+    humanEverCoastModel.visible = true;
+  }
 }
 
 function onWindowResize() {
