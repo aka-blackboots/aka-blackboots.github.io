@@ -147,9 +147,9 @@ function createPlayerApi(scene) {
       //alert('Pinch');
       scaleVal = humanEverCoastModel.scale.x;
       if (e.scale >= 1) {
-        scaleVal = parseFloat(scaleVal + (1 - e.scale));
+        scaleVal = parseFloat(scaleVal + (e.scale - 1));
       } else {
-        scaleVal = parseFloat(scaleVal - e.scale);
+        scaleVal = parseFloat(scaleVal - e.scale/10);
       }
 
       alert(scaleVal);
