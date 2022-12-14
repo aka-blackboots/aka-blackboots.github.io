@@ -146,10 +146,12 @@ function createPlayerApi(scene) {
     manager.on('pinch', function (e) {
       //alert('Pinch');
       scaleVal = humanEverCoastModel.scale.x;
-      if (e.scale >= 1) {
-        scaleVal = parseFloat(scaleVal + (e.scale - 1));
-      } else {
-        scaleVal = parseFloat(scaleVal - e.scale/10);
+      if(scaleVal <= 2 || scaleVal >= 0.3){
+        if (e.scale > 1) {
+          scaleVal = scaleVal + ((parseFloat(e.scale) - 1)/100);
+        } else {
+          scaleVal = scaleVal - parseFloat(e.scale)/100;
+        }
       }
 
       //alert(scaleVal);
