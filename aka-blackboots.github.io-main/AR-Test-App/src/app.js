@@ -85,7 +85,7 @@ function init() {
     onZoomStart: function (object, event) {
       // Do something on zoom start
       // You can use any Pinchzoom method by calling object.method()
-      console.log(event);
+      alert(event);
     },
     onZoomEnd: function (object, event) {
       // Do something on zoom end
