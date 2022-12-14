@@ -94,12 +94,14 @@ function init() {
   manager.on('pinch', function(e){
     //alert('Pinch');
     const val = humanEverCoastModel.scale.x;
-    //alert(val);
+    
+    alert(e.scale);
+
     if(e.scale > 1){
-      val = val + (1 - e.scale);
+      val = parseFloat(val + (1 - e.scale));
     }
     else{
-      val = val - e.scale;
+      val = parseFloat(val - e.scale);
     }
     
     humanEverCoastModel.scale.set(val,val,val);
