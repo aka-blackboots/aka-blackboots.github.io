@@ -93,6 +93,7 @@ function init() {
   manager.on('pinch', function(e){
     //alert('Pinch');
     const val = humanEverCoastModel.scale.x;
+    alert(val);
     if(e.scale > 1){
       val = val + (1 - e.scale);
     }
@@ -146,7 +147,7 @@ function createPlayerApi(scene) {
     console.log('evercoast mesh asset created');
     scene.add(asset);
     humanEverCoastModel = asset;
-    //humanEverCoastModel.visible = false;
+    humanEverCoastModel.visible = false;
     humanEverCoastModel.rotation.y = (Math.PI);
     humanEverCoastModel.scale.set(0.7, 0.7, 0.7);
   }
