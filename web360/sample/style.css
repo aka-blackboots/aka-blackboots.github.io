@@ -1,0 +1,29 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    overflow: hidden;
+}
+
+.info{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    color: white;
+    font-family: monospace;
+    text-align: center;
+    padding: 5px 0;
+}
+
+#three-container{
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+    border: 1px solid red;
+    width: 100vw;
+    height: 100%;
+}
